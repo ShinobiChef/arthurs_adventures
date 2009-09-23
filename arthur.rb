@@ -33,11 +33,11 @@ class Arthur
     
         $titlescreenmusicogg = Gosu::Song.new(window, "data/music/OGG/ArthurTheme.ogg")
         $normalareamusicogg = Gosu::Song.new(window, "data/music/OGG/NormalRealm.ogg")
-        $fireareamusicogg = Gosu::Song.new(window, "data/music/Midi/FireRealm.mid")
+        $fireareamusicogg = Gosu::Song.new(window, "data/music/OGG/NormalRealm.ogg")
         $iceareamusicogg = Gosu::Song.new(window, "data/music/OGG/IceRealm.ogg")
         $lightningareamusicogg = Gosu::Song.new(window, "data/music/OGG/NormalRealm.ogg")
         $groundareamusicogg = Gosu::Song.new(window, "data/music/OGG/PoisonRealm.ogg")
-        $evilareamusicogg = Gosu::Song.new(window, "data/music/Midi/EvilRealm.mid")
+        $evilareamusicogg = Gosu::Song.new(window, "data/music/OGG/NormalRealm.ogg")
     
         $fireareamusicogg.volume = 0.15
         $iceareamusicogg.volume = 0.20

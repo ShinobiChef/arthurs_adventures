@@ -265,20 +265,15 @@ $normalareatileset = Image.load_tiles(self, "data/tiles/normalrealmtileset.png",
   
  @currentareabkimage = Image.new(self, "data/backgrounds/blank.png", true)
     @area1bk = Image.new(self, "data/backgrounds/area1bk.png", true)
-    @area2bk = Image.new(self, "data/backgrounds/area2bk.png", true)
-    @area3bk = Image.new(self, "data/backgrounds/area3bk.png", true)
-    @area4bk = Image.new(self, "data/backgrounds/area4bk.png", true)
-    @area5bk = Image.new(self, "data/backgrounds/area5bk.png", true)
-    @area6bk = Image.new(self, "data/backgrounds/area6bk.png", true)
-    @area7bk = Image.new(self, "data/backgrounds/area7bk.png", true)
-    @area8bk = Image.new(self, "data/backgrounds/area8bk.png", true)
-    @area9bk = Image.new(self, "data/backgrounds/area9bk.png", true)
-    @evilareabk = Image.new(self, "data/backgrounds/area9bk.png", true)
-    @fireareabk = Image.new(self, "data/backgrounds/firedungeonbk.png", true)
-    @groundareabk = Image.new(self, "data/backgrounds/grounddungeonbk.png", true)
-    @iceareabk = Image.new(self, "data/backgrounds/icedungeonbk.png", true)
-    @lightningareabk = Image.new(self, "data/backgrounds/lightningdungeonbk.png", true)
-
+    @area2bk = Image.new(self, "data/backgrounds/area1bk.png", true)
+    @area3bk = Image.new(self, "data/backgrounds/area1bk.png", true)
+    @area4bk = Image.new(self, "data/backgrounds/area1bk.png", true)
+    @area5bk = Image.new(self, "data/backgrounds/area1bk.png", true)
+    @area6bk = Image.new(self, "data/backgrounds/area1bk.png", true)
+    @area7bk = Image.new(self, "data/backgrounds/area1bk.png", true)
+    @area8bk = Image.new(self, "data/backgrounds/area1bk.png", true)
+    @area9bk = Image.new(self, "data/backgrounds/area1bk.png", true)
+    
 @sprlives = Image.new(self, "data/items/helmet.png", true)   
 @sprlrp = Image.new(self, "data/items/largeredpotion.png", true)   
 @sprlbp = Image.new(self, "data/items/largebluepotion.png", true)
@@ -431,11 +426,6 @@ if $currentarea == 15 and $x>12475 and $x<12495 and $y<9950 and $y>9800 then
   if $currentarea == 7 then @currentareabkimage = @area7bk and @map = $area7map end
   if $currentarea == 8 then @currentareabkimage = @area8bk and @map = $area8map end
   if $currentarea == 9 then @currentareabkimage = @area9bk and @map = $area9map end
-    if $currentarea == 10 then @currentareabkimage = @fireareabk  and @map = $fireareamap end
-    if $currentarea == 11 then @currentareabkimage = @iceareabk and @map = $iceareamap end
-    if $currentarea == 12 then @currentareabkimage = @lightningareabk  and @map = $lightningareamap end
-    if $currentarea == 13 then @currentareabkimage = @groundareabk and @map = $groundareamap end
-    if $currentarea == 15 then @currentareabkimage = @evilareabk and @map = $evilareamap end
     
     
     
