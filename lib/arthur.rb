@@ -1,9 +1,22 @@
+# In case you use Gosu via rubygems.
+begin
+  require 'rubygems'
+rescue LoadError
+  # In case you don't.
+end
+
+# load external dependencies
+require 'gosu'
+
 $LOAD_PATH.unshift(File.dirname(__FILE__) + "/arthur")
 
 module Artventure
-  LIB_FILES = %w[arthur items main map]
+  include Gosu
+  
+  LIB_FILES = %w[ sprite arthur items main map hud ]
   ROOT_DIR  = File.dirname(__FILE__) + "/.."
   DATA_DIR  = ROOT_DIR + "/data"
 end
 
+# load all source files for the project
 Artventure::LIB_FILES.each{|file| require file}

@@ -1,24 +1,56 @@
-class FPSCounter
-  attr_reader :fps
+# TODO: assign images to corresponding Sprites declaratively
+#
+# @spritembox = Resource["items/statsbox.png", true]
+# @sprstatsbanner = Resource["data/backgrounds/statsbanner.png", true]
+# gold_img = Resource['items/gold3']
 
-  def initialize
-    @current_second = Gosu::milliseconds / 1000
-    @accum_fps = 0
-    @fps = 0
-  end
+# shop_img = Image.new(window, "data/items/wizardred.png", false)
+# helmet_img = Image.new(window, "data/items/helmet.png", false)
+# firecrystal_img = Image.new(window, "data/items/crystalfire.png", false)
+# firebook_img = Image.new(window, "data/items/bookfire.png", false)
+# icecrystal_img = Image.new(window, "data/items/crystalice.png", false)
+# icebook_img = Image.new(window, "data/items/bookice.png", false)
+# lightningcrystal_img = Image.new(window, "data/items/crystallightning.png", false)
+# lightningbook_img = Image.new(window, "data/items/booklightning.png", false)
+# earthcrystal_img = Image.new(window, "data/items/crystalearth.png", false)
+# earthbook_img = Image.new(window, "data/items/bookground.png", false)
+# sign_img = Image.new(window, "data/items/sign2-small.png", false)
+# evilbook_img = Image.new(window, "data/items/bookevil.png", false)
+# swordsandgreyshield_img = Image.new(window, "data/items/2swordsandgreyshield.png", false)
+# tree1_img = Image.new(window, "data/items/tree1.png", false)
+# tree2_img = Image.new(window, "data/items/tree2.png", false)
+# tree3_img = Image.new(window, "data/items/tree3.png", false)
+# tree4_img = Image.new(window, "data/items/tree4.png", false)
+# groundareagate_img = Image.new(window, "data/items/caveofground.png", false)
+# house1_img = Image.new(window, "data/items/house1.png", false)
+# greenpotion_img = Image.new(window, "data/items/largegreenpotion.png", false)
+# bluepotion_img = Image.new(window, "data/items/largebluepotion.png", false)
+# redpotion_img = Image.new(window, "data/items/largeredpotion.png", false)
+# goldpotion_img = Image.new(window, "data/items/largegoldpotion.png", false)
+# 
+# fire_img = Image.new(window, "data/enemys/fire.png", false)
+# snake_img = Image.new(window, "data/enemys/snake.png", false)
+# 
+# checkpoint_img = Image.new(window, "data/items/skullcheckpoint.png", false)
+# greyshield_img = Image.new(window, "data/items/greyshield.png", false)
+# powerupsword_img = Image.new(window, "data/items/powerupsword2.png", false)
 
-  def register_tick
-    @accum_fps += 1
-    current_second = Gosu::milliseconds / 1000
-    if current_second != @current_second
-      @current_second = current_second
-      @fps = @accum_fps
-      @accum_fps = 0
-    end
-  end
+
+# TODO: maybe rename to Equipment
+class Collectable
+  include Sprite
 end
 
-class Collectiblegold
+
+class Gold < Collectable
+  IMAGE = 'items/gold3'  
+end
+
+
+# TODO: refactor below like Gold class above
+# test, test, test
+
+class CollectibleGold
   attr_reader :x, :y
  
   def initialize(image, x, y)
@@ -35,9 +67,7 @@ class Collectiblegold
   end
  
   def draw(screen_x, screen_y)
-   # Draw, slowly rotating
-    @image.draw_rot(@x - screen_x, @y - screen_y, 0,
-      0)
+    animate(:nothing, screen_x, screen_y)
   end
 end
 
@@ -83,8 +113,7 @@ class Collectiblehelmet
  
   def draw(screen_x, screen_y)
     # Draw, slowly rotating
-    @image.draw_rot(@x - screen_x, @y - screen_y+5 * Math.sin(thisTime / 133.7), 0,
-      0)
+    animate(:rotate_slowly, screen_x, screen_y)
   end
 end
 
@@ -106,8 +135,7 @@ class Collectiblefirecrystal
  
   def draw(screen_x, screen_y)
     # Draw, slowly rotating
-    @image.draw_rot(@x - screen_x, @y - screen_y+5 * Math.sin(thisTime / 133.7), 0,
-      0)
+    animate(:rotate_slowly, screen_x, screen_y)
   end
 end
 
@@ -129,8 +157,7 @@ class Collectiblefirebook
  
   def draw(screen_x, screen_y)
     # Draw, slowly rotating
-    @image.draw_rot(@x - screen_x, @y - screen_y+5 * Math.sin(thisTime / 133.7), 0,
-      0)
+    animate(:rotate_slowly, screen_x, screen_y)
   end
 end
 
@@ -152,8 +179,7 @@ class Collectibleicecrystal
  
   def draw(screen_x, screen_y)
     # Draw, slowly rotating
-    @image.draw_rot(@x - screen_x, @y - screen_y+5 * Math.sin(thisTime / 133.7), 0,
-      0)
+    animate(:rotate_slowly, screen_x, screen_y)
   end
 end
 
@@ -175,8 +201,7 @@ class Collectibleicebook
  
   def draw(screen_x, screen_y)
     # Draw, slowly rotating
-    @image.draw_rot(@x - screen_x, @y - screen_y+5 * Math.sin(thisTime / 133.7), 0,
-      0)
+    animate(:rotate_slowly, screen_x, screen_y)
   end
 end
 
@@ -198,8 +223,7 @@ class Collectiblelightningcrystal
  
   def draw(screen_x, screen_y)
     # Draw, slowly rotating
-    @image.draw_rot(@x - screen_x, @y - screen_y+5 * Math.sin(thisTime / 133.7), 0,
-      0)
+    animate(:rotate_slowly, screen_x, screen_y)
   end
 end
 
@@ -221,8 +245,7 @@ class Collectiblelightningbook
  
   def draw(screen_x, screen_y)
     # Draw, slowly rotating
-    @image.draw_rot(@x - screen_x, @y - screen_y+5 * Math.sin(thisTime / 133.7), 0,
-      0)
+    animate(:rotate_slowly, screen_x, screen_y)
   end
 end
 
@@ -244,8 +267,7 @@ class Collectibleearthcrystal
  
   def draw(screen_x, screen_y)
     # Draw, slowly rotating
-    @image.draw_rot(@x - screen_x, @y - screen_y+5 * Math.sin(thisTime / 133.7), 0,
-      0)
+    animate(:rotate_slowly, screen_x, screen_y)
   end
 end
 
@@ -267,8 +289,7 @@ class Collectibleearthbook
  
   def draw(screen_x, screen_y)
     # Draw, slowly rotating
-    @image.draw_rot(@x - screen_x, @y - screen_y+5 * Math.sin(thisTime / 133.7), 0,
-      0)
+    animate(:rotate_slowly, screen_x, screen_y)
   end
 end
 
@@ -314,8 +335,7 @@ class Collectibleevilbook
  
   def draw(screen_x, screen_y)
     # Draw, slowly rotating
-    @image.draw_rot(@x - screen_x, @y - screen_y+5 * Math.sin(thisTime / 133.7), 0,
-      0)
+    animate(:rotate_slowly, screen_x, screen_y)
   end
 end
 
@@ -337,8 +357,7 @@ class Collectibleswordsandgreyshield
  
   def draw(screen_x, screen_y)
     # Draw, slowly rotating
-    @image.draw_rot(@x - screen_x, @y - screen_y+5 * Math.sin(thisTime / 133.7), 0,
-      0)
+    animate(:rotate_slowly, screen_x, screen_y)
   end
 end
 
@@ -577,7 +596,7 @@ end
   end
 end
  
- class Collectiblegoldpotion
+ class CollectibleGoldPotion
   attr_reader :x, :y
  
   def initialize(image, x, y)
@@ -618,35 +637,22 @@ class Collectiblegreyshield
   
   def draw(screen_x, screen_y)
     # Draw, slowly rotating
-    @image.draw_rot(@x - screen_x, @y - screen_y+5 * Math.sin(thisTime / 133.7), 0,
-      0)
+    animate(:rotate_slowly, screen_x, screen_y)
   end
 end
 
-class Collectiblepowerupsword
-  attr_reader :x, :y
-
-  def initialize(image, x, y)
-    @image = image
-    @x, @y = x, y
-    @initTime = Gosu::milliseconds #the the milliseconds when created
-    @delay = (rand 100)+1 #add a delay to the time so they move differently
-      end
-  
-  #thisTime is the golds own independant time so they all move differently.
-  #quite handy in independant animations like on-the-spot explosions.
-  def thisTime
-    Gosu::milliseconds - @initTime/@delay
+class PowerupSword < Collectable
+  def initialize(x, y)
+    super(Resource["items/powerupsword2.png"], x, y)
   end
   
   def draw(screen_x, screen_y)
-    # Draw, slowly rotating
-    @image.draw_rot(@x - screen_x, @y - screen_y+5 * Math.sin(thisTime / 133.7), 0,
-      0)
-  end
+    animate(:rotate_slowly, screen_x, screen_y)
+  end  
 end
+
  
- class Hitablefire
+class Hitablefire
   attr_reader :x, :y
  
   def initialize(image, x, y)
@@ -663,12 +669,11 @@ end
   end
  
   def draw(screen_x, screen_y)
-    # Draw, slowly rotating
-    @image.draw_rot(@x - screen_x, @y - screen_y, 0,
-      0)
+    animation :nothing
   end
 end
 
+# SNAAAAAKE
 class Hitablesnake
   attr_reader :x, :y
  
