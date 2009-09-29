@@ -1,6 +1,5 @@
 # Map class holds and draws tiles and golds.
-
-class Map
+class Artventure::Map
   SQUARE_SIZE = 50
   attr_reader :width,
               :height,
@@ -148,128 +147,127 @@ class Map
   
   private
     
-    # returns map as an 2d array
-    def load_map(filename)
-      lines = File.readlines(filename).map { |line| line.chop }
-      
-      @height = lines.size
-      @width = lines[0].size
-            
-      @map = Array.new(@width) do |x|
-        Array.new(@height) do |y|
-          case lines[y][x, 1]
-          when '"'
-            Tiles::Grass
-          when '#'
-            Tiles::Earth
-          when '`'
-            Tiles::Bstone
-          when '~'
-            Tiles::Bstoneg
-          when '1'
-            Tiles::Ystone
-          when '!'
-            Tiles::Ystoneg
-          when '@'
-            Tiles::Rstoneg
-          when '2'
-            Tiles::Rstone
-          when '4'
-            Tiles::Earthw1
-          when '$'
-            Tiles::Ystonew1
-          when '5'
-            Tiles::Rstonew1
-          when '%'
-            Tiles::Earthw2
-          when '6'
-            Tiles::Earthw3
-          when '^'
-            Tiles::Earthw4
-          when '7'
-            Tiles::Ystonew2
-          when '&'
-            Tiles::Ystonew3
-          when '8'
-            Tiles::Ystonew4
-          when '*'
-            Tiles::Rstonew2
-          when '9'
-            Tiles::Rstonew3
-          when '('
-            Tiles::Rstonew4
-          when '0'
-            Tiles::Istonew2
-          when ')'
-            Tiles::Istonew3
-          when 'q'
-            Tiles::Istonew4
-          when 'Q'
-            Tiles::Istonew1
-          when 'f'
-            Sprites[:fires] << HitableFire.new(@window, x, y)
-          when 'J'
-            Sprites[:snakes] << HitableSnake.new(@window, x, y)
-          when 'c'
-            Sprites[:checkpoints] << CheckpointSkull.new(@windows, x, y)
-          when 'S'
-            Sprites[:powerupswords] << PowerupSword.new(@window, x, y)
-          when 'H'
-            Sprites[:helmets] << Collectiblehelmet.new(@window, x, y)
-          when 'v'
-            Sprites[:firecrystals] << Collectiblefirecrystal.new(@window, x, u)
-          when 'a'
-            Sprites[:firebooks] << Collectiblefirebook.new(@window, x, y)
-          when 'y'
-            Sprites[:icecrystals] << Collectibleicecrystal.new(@window, x, y)
-          when 'i'
-            Sprites[:icebooks] << Collectibleicebook.new(@window, x, y)
-          when 'l'
-            Sprites[:lightningcrystals] << Collectiblelightningcrystal.new(@window, x, y)
-          when 'z'
-            Sprites[:lightningbooks] << Collectiblelightningbook.new(@window, x, y)
-          when 'V'
-            Sprites[:earthcrystals] << Collectibleearthcrystal.new(@window, x, y)
-          when 'b'
-            Sprites[:earthbooks] << Collectibleearthbook.new(@window, x, y)
-          when 'p'
-            Sprites[:signs] << Sign.new(@window, x, y)
-          when 'e'
-            Sprites[:evilbooks] << Collectibleevilbook.new(@window, x, y)
-          when 'C'
-            Sprites[:swordsandgreyshields] << Collectibleswordsandgreyshield.new(@window, x, y)
-          when 'T'
-            Sprites[:tree1s] << Bktree1.new(@window, x, y)
-          when 'F'
-            Sprites[:tree2s] << Collectibletree2.new(@window, x, y)
-          when 'I'
-            Sprites[:tree3s] << Collectibletree3.new(@window, x, y)
-          when 'L'
-            Sprites[:tree4s] << Collectibletree4.new(@window, x, y)
-          when 'G'
-            Sprites[:groundareagates] << Collectiblegroundareagate.new(@window, x, y)
-          when 'E'
-            Sprites[:house1s] << Collectiblehouse1.new(@window, x, y)
-          when 's'
-            Sprites[:greyshields] << Collectiblegreyshield.new(@window, x, y)
-          when 'm'
-            Sprites[:bluepotions] << Collectiblebluepotion.new(@window, x, y)
-          when 'h'
-            Sprites[:redpotions] << Collectibleredpotion.new(@window, x, y)
-          when 'Y'
-            Sprites[:goldpotions] << CollectibleGoldPotion.new(@window, x, y)
-          when 'g'
-            Sprites[:greenpotions] << Collectiblegreenpotion.new(@window, x, y)
-          when 'x'
-            Sprites[:golds] << Gold.new(@window, x, y)
-          when 'R'
-            Sprites[:shops] << Shop.new(@window, x, y)
-          else
-            # nada ?
-          end
+  # returns map as an 2d array
+  def load_map(filename)
+    lines = File.readlines(filename).map { |line| line.chop }
+    
+    @height = lines.size
+    @width = lines[0].size
+          
+    @map = Array.new(@width) do |x|
+      Array.new(@height) do |y|
+        case lines[y][x, 1]
+        when '"'
+          Tiles::Grass
+        when '#'
+          Tiles::Earth
+        when '`'
+          Tiles::Bstone
+        when '~'
+          Tiles::Bstoneg
+        when '1'
+          Tiles::Ystone
+        when '!'
+          Tiles::Ystoneg
+        when '@'
+          Tiles::Rstoneg
+        when '2'
+          Tiles::Rstone
+        when '4'
+          Tiles::Earthw1
+        when '$'
+          Tiles::Ystonew1
+        when '5'
+          Tiles::Rstonew1
+        when '%'
+          Tiles::Earthw2
+        when '6'
+          Tiles::Earthw3
+        when '^'
+          Tiles::Earthw4
+        when '7'
+          Tiles::Ystonew2
+        when '&'
+          Tiles::Ystonew3
+        when '8'
+          Tiles::Ystonew4
+        when '*'
+          Tiles::Rstonew2
+        when '9'
+          Tiles::Rstonew3
+        when '('
+          Tiles::Rstonew4
+        when '0'
+          Tiles::Istonew2
+        when ')'
+          Tiles::Istonew3
+        when 'q'
+          Tiles::Istonew4
+        when 'Q'
+          Tiles::Istonew1
+        when 'f'
+          Sprites[:fires] << HitableFire.new(@window, x, y)
+        when 'J'
+          Sprites[:snakes] << HitableSnake.new(@window, x, y)
+        when 'c'
+          Sprites[:checkpoints] << CheckpointSkull.new(@windows, x, y)
+        when 'S'
+          Sprites[:powerupswords] << PowerupSword.new(@window, x, y)
+        when 'H'
+          Sprites[:helmets] << Collectiblehelmet.new(@window, x, y)
+        when 'v'
+          Sprites[:firecrystals] << Collectiblefirecrystal.new(@window, x, u)
+        when 'a'
+          Sprites[:firebooks] << Collectiblefirebook.new(@window, x, y)
+        when 'y'
+          Sprites[:icecrystals] << Collectibleicecrystal.new(@window, x, y)
+        when 'i'
+          Sprites[:icebooks] << Collectibleicebook.new(@window, x, y)
+        when 'l'
+          Sprites[:lightningcrystals] << Collectiblelightningcrystal.new(@window, x, y)
+        when 'z'
+          Sprites[:lightningbooks] << Collectiblelightningbook.new(@window, x, y)
+        when 'V'
+          Sprites[:earthcrystals] << Collectibleearthcrystal.new(@window, x, y)
+        when 'b'
+          Sprites[:earthbooks] << Collectibleearthbook.new(@window, x, y)
+        when 'p'
+          Sprites[:signs] << Sign.new(@window, x, y)
+        when 'e'
+          Sprites[:evilbooks] << Collectibleevilbook.new(@window, x, y)
+        when 'C'
+          Sprites[:swordsandgreyshields] << Collectibleswordsandgreyshield.new(@window, x, y)
+        when 'T'
+          Sprites[:tree1s] << Bktree1.new(@window, x, y)
+        when 'F'
+          Sprites[:tree2s] << Collectibletree2.new(@window, x, y)
+        when 'I'
+          Sprites[:tree3s] << Collectibletree3.new(@window, x, y)
+        when 'L'
+          Sprites[:tree4s] << Collectibletree4.new(@window, x, y)
+        when 'G'
+          Sprites[:groundareagates] << Collectiblegroundareagate.new(@window, x, y)
+        when 'E'
+          Sprites[:house1s] << Collectiblehouse1.new(@window, x, y)
+        when 's'
+          Sprites[:greyshields] << Collectiblegreyshield.new(@window, x, y)
+        when 'm'
+          Sprites[:bluepotions] << Collectiblebluepotion.new(@window, x, y)
+        when 'h'
+          Sprites[:redpotions] << Collectibleredpotion.new(@window, x, y)
+        when 'Y'
+          Sprites[:goldpotions] << CollectibleGoldPotion.new(@window, x, y)
+        when 'g'
+          Sprites[:greenpotions] << Collectiblegreenpotion.new(@window, x, y)
+        when 'x'
+          Sprites[:golds] << Gold.new(@window, x, y)
+        when 'R'
+          Sprites[:shops] << Shop.new(@window, x, y)
+        else
+          # nada ?
         end
       end
     end
-    
+  end
+  
 end
-

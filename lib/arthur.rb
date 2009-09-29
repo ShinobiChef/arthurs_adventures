@@ -13,7 +13,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__) + "/arthur")
 module Artventure
   include Gosu
   
-  LIB_FILES = %w[ sprite arthur items main map hud ]
+  LIB_FILES = %w[ sprite arthur items map game hud main ]
   ROOT_DIR  = File.dirname(__FILE__) + "/.."
   DATA_DIR  = ROOT_DIR + "/data"
 end
