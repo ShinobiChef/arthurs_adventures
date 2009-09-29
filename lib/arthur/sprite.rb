@@ -13,7 +13,7 @@ module Artventure
       @image = Resource[IMAGE, window]
       @x, @y = to_absolute(x), to_absolute(y)
       # add a delay to the time so they move differently
-      DELAY = (rand 100) + 1
+      @delay = (rand 100) + 1
     end
   
   
@@ -36,7 +36,7 @@ module Artventure
     # thisTime is the golds own independant time so they all move differently.
     # Quite handy in independant animations like on-the-spot explosions.
     def thisTime
-      Gosu::milliseconds - INIT_TIME / DELAY
+      Gosu::milliseconds - INIT_TIME / @delay
     end
 
     def to_absolute(x)
