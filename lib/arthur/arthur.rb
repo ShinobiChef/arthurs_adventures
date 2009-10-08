@@ -524,7 +524,11 @@ module Artventure
       end
       if @arthurhp < 1 then $x = @checkpointx and $y = @checkpointy and $currentarea = @checkpointarea and @arthurhp=@arthurmaxhp  and $arthurlives  -= 1 and @arthurstatus5=0  and changemusic end
       if @arthurmp < 0 then @arthurmp = 0 end
+<<<<<<< HEAD
       if $arthurlives < 1 then $gamemode = 1  and $titlescreenmusicogg.play(looping = true)  end
+=======
+      if $arthurlives < 1 then @game_mode = 1  and $titlescreenmusicogg.play(looping = true)  end
+>>>>>>> e4bee5205049a40ee6751b0591a334083d03f63d
   end
 
 

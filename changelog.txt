@@ -1,0 +1,5 @@
+
+23/09/2009
+#Changed main.rb and arthur.rb so that main.rb can be run  beacause of files that where removed to keep repo small
+#Renamed README to README.txt
+#Added this file(changelog.txt)
