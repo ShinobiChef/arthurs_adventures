@@ -13,102 +13,80 @@ class Artventure::Game < Window
               :rannum
 
   def initialize
-# -   @gamexres, @gameyres = 1280, 800
+    # - @gamexres, @gameyres = 1280, 800
     super(@gamexres = 1280, @gameyres = 800, true)
+
 
     @rannum = 1
     @last_game_mode = 1
     @game_mode = 1
     @loaded_stuff = false
-    $selectedgroup = 1
+    @selectedgroup = 1
 
 
-    self.caption = "Arthur's Adventures V0.4"
-    @font = Gosu::Font.new(self, Gosu::default_font_name, 20)
-    @fontsmall = Gosu::Font.new(self, Gosu::default_font_name, 14)
-    @titlefont1 = Gosu::Font.new(self, Gosu::default_font_name, 45)
-    @creditsfont = Gosu::Font.new(self, Gosu::default_font_name, 30)
-    @titlescreenimage = Image.new(self, "data/backgrounds/titlescreenv5.png", true)
-    @introimage = Image.new(self, "data/backgrounds/intro.png", true)
-    @pausescreenimage = Image.new(self, "data/backgrounds/pausescreen1.png", true)
-    @shopscreenimage = Image.new(self, "data/backgrounds/shopscreen1.png", true)
+    self.caption = "Arthur's Adventures v#{VERSION}"
     
-    @howtoplayguide = [Image.new(self, "data/backgrounds/htpgp1.png", true)]
-    @howtoplayguide << Image.new(self, "data/backgrounds/htpgp2.png", true)
-    @howtoplayguide << Image.new(self, "data/backgrounds/htpgp3.png", true)
-    @howtoplayguide << Image.new(self, "data/backgrounds/htpgp4.png", true)
+    # initialize Resources
+    @resources = Resources.new(self)
     
-    @creditspage = Image.new(self, "data/backgrounds/credits.png", true)
-    @menuicon = Image.new(self, "data/items/dagger4-2.png", true)
+    # Fonts
+    @fonts = {}
+    @fonts[:default] = Gosu::Font.new(self, Gosu::default_font_name, 20)
+    @fonts[:small] = Gosu::Font.new(self, Gosu::default_font_name, 14)
+    @fonts[:title] = Gosu::Font.new(self, Gosu::default_font_name, 45)
+    @fonts[:credits] = Gosu::Font.new(self, Gosu::default_font_name, 30)
+    
+    # Images
+    @backgrounds = {}
+    @backgrounds[:intro]         = @resources.background("intro.png")
+    @backgrounds[:title_screen]  = @resources.background("titlescreenv5.png")
+    @backgrounds[:pause_screen]  = @resources.background("pausescreen1.png")
+    @backgrounds[:shop_screen]   = @resources.background("shopscreen1.png")
+    @backgrounds[:how_to_page_1] = @resources.background("htpgp1.png")
+    @backgrounds[:how_to_page_2] = @resources.background("htpgp2.png")
+    @backgrounds[:how_to_page_3] = @resources.background("htpgp3.png")
+    @backgrounds[:how_to_page_4] = @resources.background("htpgp4.png")
+    @backgrounds[:credits]       = @resources.background("credits.png")
+    
+    # Images
+    @images = {}
+    @images[:menu_icon] = @resources.image("items/dagger4-2.png", true)
+    
+    # SFX
+    @sfx = {}
+    @sfx[:menu_move]         = @resources.sfx("menumovesound.wav")
+    @sfx[:menu_press_button] = @resources.sfx("bpress.wav")
+    @sfx[:pause_button]      = @resources.sfx("pausesound.wav")
+    @sfx[:unpause_button]    = @resources.sfx("unpausesound.wav")
+    @sfx[:error]             = @resources.sfx("errorsound.wav")
+    @sfx[:buy_item]          = @resources.sfx("buyitem1.wav")
+    # @buyitemsound = Gosu::Sample.new(self, "data/sfx/buyitem1.wav")
+    
+    # TODO: pack in hash @icon_pos or something
+    @title_screen_icon_pos = 1
+    @pause_screen_icon_pos = 1
+    @shop_screen_icon_pos = 1
 
-    @menumovesound = Gosu::Sample.new(self, "data/sfx/menumovesound.wav")
-    @menupressbuttonsound = Gosu::Sample.new(self, "data/sfx/bpress.wav")
-    @pausebuttonsound = Gosu::Sample.new(self, "data/sfx/pausesound.wav")
-    @unpausebuttonsound = Gosu::Sample.new(self, "data/sfx/unpausesound.wav")
-    @errorsound = Gosu::Sample.new(self, "data/sfx/errorsound.wav")
-    @buyitemsound = Gosu::Sample.new(self, "data/sfx/buyitem1.wav")
-
-    $titlescreeniconpos = 1
-    $pausescreeniconpos = 1
-    $htpgpagenum = 1
-    $shopscreeniconpos = 1
+    @how_to_page = 1
     @fps_check = FPSCounter.new()
-    @cptn = Arthur.new(self, 400, 100)
 
+    @arthur = Arthur.new(self, 400, 100)
 
-    @hpbarcolor = Gosu::Color.new(0xff000000)
-    @hpbarcolor.red = 255
-    @hpbarcolor.green = 0
-    @hpbarcolor.blue = 0
-
-    @hpbarcolor2 = Gosu::Color.new(0xff000000)
-    @hpbarcolor2.red = 248
-    @hpbarcolor2.green = 251
-    @hpbarcolor2.blue = 4
-
-    @mpbarcolor = Gosu::Color.new(0xff000000)
-    @mpbarcolor.red = 0
-    @mpbarcolor.green = 0
-    @mpbarcolor.blue = 255
-
-    @mpbarcolor2 = Gosu::Color.new(0xff000000)
-    @mpbarcolor2.red = 9
-    @mpbarcolor2.green = 198
-    @mpbarcolor2.blue = 253
-
-
-    $titlescreenmusicogg.volume = 0.15
-    $normalareamusicogg.volume = 0.15
-    $titlescreenmusicogg.play(looping = true)       
+    # Colors
+    @colors = {}
+    @colors[:hp_bar] = @resources.color(:red)
+    @colors[:hp_bar2] = @resources.color(248, 251, 4)
+    @colors[:mp_bar] = @resources.color(:green)
+    @colors[:mp_bar2] = @resources.color(248, 251, 4)
+    
+    # Songs
+    load_music
+    @songs[:title_screen].play(looping = true)
+    
     # Scrolling is stored as the position of the top left corner of the screen.
     @screen_x = @screen_y = 0
   end
 
-  def changemusic
-    case $currentarea
-    when 1..5 then $normalareamusicogg.play(looping = true)
-    when 6    then $iceareamusicogg.play(looping = true)
-    when 7    then $fireareamusicogg.play(looping = true)
-    when 8    then $normalareamusicogg.play(looping = true)
-    when 9    then $evilareamusicogg.play(looping = true)
-    end
-  end
-
-  def pausemusic
-    song = case $currentarea
-    when 1..5 then $normalareamusicogg
-    when 6    then $iceareamusicogg
-    when 7    then $fireareamusicogg
-    when 8    then $normalareamusicogg
-    when 9    then $evilareamusicogg
-    when 10   then $fireareamusicogg
-    when 11   then $iceareamusicogg
-    when 12   then $lightningareamusicogg
-    when 13   then $groundareamusicogg
-    when 15   then $evilareamusicogg
-    end
-    song.pause
-  end
 
   def update
     # TODO: use symbol instead of numbers
@@ -125,30 +103,30 @@ class Artventure::Game < Window
 
     #if @rannum == 100 then @menumovesound.play end
 
-    @cptn.update(move_x)
-    @cptn.collect_golds(@map.golds)
-    @cptn.collect_shops(@map.shops)
-    @cptn.collect_helmets(@map.helmets)
-    @cptn.collect_firecrystals(@map.firecrystals)
-    @cptn.collect_firebooks(@map.firebooks)
-    @cptn.collect_icecrystals(@map.icecrystals)
-    @cptn.collect_icebooks(@map.icebooks)
-    @cptn.collect_lightningcrystals(@map.lightningcrystals)
-    @cptn.collect_lightningbooks(@map.lightningbooks)
-    @cptn.collect_earthcrystals(@map.earthcrystals)
-    @cptn.collect_earthbooks(@map.earthbooks)
-    @cptn.collect_evilbooks(@map.evilbooks)
-    @cptn.collect_swordsandgreyshields(@map.swordsandgreyshields)
-    @cptn.collect_groundareagates(@map.groundareagates)
-    @cptn.collect_bluepotions(@map.bluepotions)
-    @cptn.collect_redpotions(@map.redpotions)
-    @cptn.collect_goldpotions(@map.goldpotions)    
-    @cptn.collect_greenpotions(@map.greenpotions)    
-    @cptn.hit_checkpoint(@map.checkpoints)
-    @cptn.hit_fires(@map.fires)
-    @cptn.hit_snakes(@map.snakes)
-    @cptn.collect_greyshields(@map.greyshields)
-    @cptn.collect_powerupswords(@map.powerupswords)
+    @arthur.update(move_x)
+    @arthur.collect_golds(@map.golds)
+    @arthur.collect_shops(@map.shops)
+    @arthur.collect_helmets(@map.helmets)
+    @arthur.collect_firecrystals(@map.firecrystals)
+    @arthur.collect_firebooks(@map.firebooks)
+    @arthur.collect_icecrystals(@map.icecrystals)
+    @arthur.collect_icebooks(@map.icebooks)
+    @arthur.collect_lightningcrystals(@map.lightningcrystals)
+    @arthur.collect_lightningbooks(@map.lightningbooks)
+    @arthur.collect_earthcrystals(@map.earthcrystals)
+    @arthur.collect_earthbooks(@map.earthbooks)
+    @arthur.collect_evilbooks(@map.evilbooks)
+    @arthur.collect_swordsandgreyshields(@map.swordsandgreyshields)
+    @arthur.collect_groundareagates(@map.groundareagates)
+    @arthur.collect_bluepotions(@map.bluepotions)
+    @arthur.collect_redpotions(@map.redpotions)
+    @arthur.collect_goldpotions(@map.goldpotions)    
+    @arthur.collect_greenpotions(@map.greenpotions)    
+    @arthur.hit_checkpoint(@map.checkpoints)
+    @arthur.hit_fires(@map.fires)
+    @arthur.hit_snakes(@map.snakes)
+    @arthur.collect_greyshields(@map.greyshields)
+    @arthur.collect_powerupswords(@map.powerupswords)
 
 
     # Scrolling follows player
@@ -162,12 +140,12 @@ class Artventure::Game < Window
       @titlescreenimage.draw(0, 0, 0)
       #@titlefont1.draw("Press Spacebar or Start Button to Make Selection" , 200, 580,1, 1.0, 1.0, 0xffffffff)
       @fontsmall.draw("V0.4" , 1230, @gameyres -20,1, 1.0, 1.0, 0xffffffff)
-      if $titlescreeniconpos == 1 then   @menuicon.draw(450, 190, 0) end
-      if $titlescreeniconpos == 2 then   @menuicon.draw(450, 245, 0) end
-      if $titlescreeniconpos == 3 then   @menuicon.draw(450, 305, 0) end
-      if $titlescreeniconpos == 4 then   @menuicon.draw(450, 365, 0) end
-      if $titlescreeniconpos == 5 then   @menuicon.draw(450, 425, 0) end
-      if $titlescreeniconpos == 6 then   @menuicon.draw(450, 480, 0) end
+      if @title_screen_icon_pos == 1 then   @menuicon.draw(450, 190, 0) end
+      if @title_screen_icon_pos == 2 then   @menuicon.draw(450, 245, 0) end
+      if @title_screen_icon_pos == 3 then   @menuicon.draw(450, 305, 0) end
+      if @title_screen_icon_pos == 4 then   @menuicon.draw(450, 365, 0) end
+      if @title_screen_icon_pos == 5 then   @menuicon.draw(450, 425, 0) end
+      if @title_screen_icon_pos == 6 then   @menuicon.draw(450, 480, 0) end
     end
 
     if @game_mode == 6
@@ -175,18 +153,18 @@ class Artventure::Game < Window
     end 
 
     if @game_mode == 5 then
-      @howtoplayguide[$htpgpagenum-1].draw(0, 0, 0) if $htpgpagenum > 0
+      @howtoplayguide[@how_to_page-1].draw(0, 0, 0) if @how_to_page > 0
     end 
 
     if @game_mode == 0
       $titlescreenmusicogg.play(looping = true)
       @game_mode = 1
-      $pausescreeniconpos = 1
+      @pause_screen_icon_pos = 1
     end
 
     if @game_mode == 10
       $titlescreenmusicogg.stop
-      @cptn.setnewgamevars
+      @arthur.setnewgamevars
 
       if not @loaded_stuff then
         $normalareatileset = Image.load_tiles(self, "data/tiles/normalrealmtileset.png", 60, 60, true)
@@ -365,22 +343,22 @@ class Artventure::Game < Window
       @currentareabkimage.draw(-@screen_x/8, -@screen_y/8, 0)
 
       @map.draw @screen_x, @screen_y , @gamexres , @gameyres
-      @cptn.draw @screen_x, @screen_y 
+      @arthur.draw @screen_x, @screen_y 
       @sprlives.draw(1055, -5, 0)
-      @font.draw("#{$arthurlives} Lvl: #{@cptn.arthurlevel} " , 1090, 10,1, 1.0, 1.0, 0xffffffff)
-      @font.draw("Exp: #{@cptn.arthurexp}" , 1070, 30,1, 1.0, 1.0, 0xffffffff)
+      @font.draw("#{$arthurlives} Lvl: #{@arthur.arthurlevel} " , 1090, 10,1, 1.0, 1.0, 0xffffffff)
+      @font.draw("Exp: #{@arthur.arthurexp}" , 1070, 30,1, 1.0, 1.0, 0xffffffff)
       @font.draw("Gold: #{$gold}" , 1070, 50,1, 1.0, 1.0, 0xffffffff)
 
-      #@font.draw("HP: #{@cptn.arthurhp}/#{@cptn.arthurmaxhp} MP: #{@cptn.arthurmp}/#{@cptn.arthurmaxmp} Exp: #{@cptn.arthurexp} WAB: #{@cptn.arthurweaponattboost}%  PDB: #{@cptn.arthurpsysicaldefenceboost}% Level: #{@cptn.arthurlevel} Rubys: #{@cptn.gold} Lives: #{@cptn.arthurlives}", 10, 196,1, 1.0, 1.0, 0xffffffff)
-      @fontsmall.draw("#{@cptn.arthurfiremagicboost}%", 202, 35,1, 1.0, 1.0, 0xffffffff)
-      @fontsmall.draw("#{@cptn.arthuricemagicboost}%", 237, 35,1, 1.0, 1.0, 0xffffffff)
-      @fontsmall.draw("#{@cptn.arthurlightningmagicboost}%", 272, 35,1, 1.0, 1.0, 0xffffffff)
-      @fontsmall.draw("#{@cptn.arthurearthmagicboost}%", 307, 35,1, 1.0, 1.0, 0xffffffff)
-      @fontsmall.draw("#{@cptn.arthurevilmagicboost}%", 202, 80,1, 1.0, 1.0, 0xffffffff)
-      #@font.draw("AD:#{@cptn.arthurdamage} SX:#{@screen_x} SY:#{@screen_y}" , 700, 115,1, 1.0, 1.0, 0xffffffff)
+      #@font.draw("HP: #{@arthur.arthurhp}/#{@arthur.arthurmaxhp} MP: #{@arthur.arthurmp}/#{@arthur.arthurmaxmp} Exp: #{@arthur.arthurexp} WAB: #{@arthur.arthurweaponattboost}%  PDB: #{@arthur.arthurpsysicaldefenceboost}% Level: #{@arthur.arthurlevel} Rubys: #{@arthur.gold} Lives: #{@arthur.arthurlives}", 10, 196,1, 1.0, 1.0, 0xffffffff)
+      @fontsmall.draw("#{@arthur.arthurfiremagicboost}%", 202, 35,1, 1.0, 1.0, 0xffffffff)
+      @fontsmall.draw("#{@arthur.arthuricemagicboost}%", 237, 35,1, 1.0, 1.0, 0xffffffff)
+      @fontsmall.draw("#{@arthur.arthurlightningmagicboost}%", 272, 35,1, 1.0, 1.0, 0xffffffff)
+      @fontsmall.draw("#{@arthur.arthurearthmagicboost}%", 307, 35,1, 1.0, 1.0, 0xffffffff)
+      @fontsmall.draw("#{@arthur.arthurevilmagicboost}%", 202, 80,1, 1.0, 1.0, 0xffffffff)
+      #@font.draw("AD:#{@arthur.arthurdamage} SX:#{@screen_x} SY:#{@screen_y}" , 700, 115,1, 1.0, 1.0, 0xffffffff)
       @font.draw("X:#{$x} Y:#{$y}" , 700, 100,1, 1.0, 1.0, 0xffffffff)
 
-      @fontsmall.draw("Current area:#{$currentarea} selectedgroup:#{$selectedgroup} " , 1000, 100,1, 1.0, 1.0, 0xffffffff)
+      @fontsmall.draw("Current area:#{$currentarea} selectedgroup:#{@selectedgroup} " , 1000, 100,1, 1.0, 1.0, 0xffffffff)
       #@fontsmall.draw("rannum:#{@rannum} " , 1000, 130,1, 1.0, 1.0, 0xffffffff) 
 
       @font.draw("#{$numredpotions} ", 45, 11,1, 1.0, 1.0, 0xffffffff)
@@ -388,7 +366,7 @@ class Artventure::Game < Window
       @font.draw("#{$numgoldpotions} ", 134, 11,1, 1.0, 1.0, 0xffffffff)
       @font.draw("#{$numgreenpotions} ", 178, 11,1, 1.0, 1.0, 0xffffffff)
 
-      x = case $selectedgroup
+      x = case @selectedgroup
       when 1
         10
       when 2
@@ -407,74 +385,74 @@ class Artventure::Game < Window
       if $numgoldpotions>0 then @sprlgp.draw(96, -15, 0) else @sprlgreyp.draw(96, -15, 0) end        
       if $numgreenpotions>0 then @sprlgrp.draw(140, -15, 0) else @sprlgreyp.draw(140, -15, 0) end        
 
-      if @cptn.arthurfiremagicboost>0 then @sprbookfire.draw(195, -5, 0) else @sprbookgrey.draw(195, -5, 0) end        
-      if @cptn.arthuricemagicboost>0 then @sprbookice.draw(230, -5, 0) else @sprbookgrey.draw(230, -5, 0) end        
-      if @cptn.arthurlightningmagicboost>0 then @sprbooklightning.draw(265, -5, 0) else @sprbookgrey.draw(265, -5, 0) end        
-      if @cptn.arthurearthmagicboost>0 then @sprbookground.draw(300, -5, 0) else @sprbookgrey.draw(300, -5, 0) end        
-      if @cptn.arthurevilmagicboost>0 then @sprbookevil.draw(195, 40, 0) else @sprbookgrey.draw(195, 40, 0) end        
+      if @arthur.arthurfiremagicboost>0 then @sprbookfire.draw(195, -5, 0) else @sprbookgrey.draw(195, -5, 0) end        
+      if @arthur.arthuricemagicboost>0 then @sprbookice.draw(230, -5, 0) else @sprbookgrey.draw(230, -5, 0) end        
+      if @arthur.arthurlightningmagicboost>0 then @sprbooklightning.draw(265, -5, 0) else @sprbookgrey.draw(265, -5, 0) end        
+      if @arthur.arthurearthmagicboost>0 then @sprbookground.draw(300, -5, 0) else @sprbookgrey.draw(300, -5, 0) end        
+      if @arthur.arthurevilmagicboost>0 then @sprbookevil.draw(195, 40, 0) else @sprbookgrey.draw(195, 40, 0) end        
 
 
-      if @cptn.arthurweapon1>0 then @sprweapon1.draw(345, -5, 0) else @sprweapon1grey.draw(345, -5, 0) end        
-      if @cptn.arthurweapon2>0 then @sprweapon2.draw(380, -5, 0) else @sprweapon2grey.draw(380, -5, 0) end        
-      if @cptn.arthurweapon3>0 then @sprweapon3.draw(415, -5, 0) else @sprweapon3grey.draw(415, -5, 0) end        
-      if @cptn.arthurweapon4>0 then @sprweapon4.draw(345, 40, 0) else @sprweapon4grey.draw(345, 40, 0) end        
-      if @cptn.arthurweapon5>0 then @sprweapon5.draw(380, 40, 0) else @sprweapon5grey.draw(380, 40, 0) end        
-      if @cptn.arthurweapon6>0 then @sprweapon6.draw(415, 40, 0) else @sprweapon6grey.draw(415, 40, 0) end        
+      if @arthur.arthurweapon1>0 then @sprweapon1.draw(345, -5, 0) else @sprweapon1grey.draw(345, -5, 0) end        
+      if @arthur.arthurweapon2>0 then @sprweapon2.draw(380, -5, 0) else @sprweapon2grey.draw(380, -5, 0) end        
+      if @arthur.arthurweapon3>0 then @sprweapon3.draw(415, -5, 0) else @sprweapon3grey.draw(415, -5, 0) end        
+      if @arthur.arthurweapon4>0 then @sprweapon4.draw(345, 40, 0) else @sprweapon4grey.draw(345, 40, 0) end        
+      if @arthur.arthurweapon5>0 then @sprweapon5.draw(380, 40, 0) else @sprweapon5grey.draw(380, 40, 0) end        
+      if @arthur.arthurweapon6>0 then @sprweapon6.draw(415, 40, 0) else @sprweapon6grey.draw(415, 40, 0) end        
 
-      if @cptn.arthurarmour1>0 then @sprarmour1.draw(485, 5, 0) else @sprarmour7.draw(485, 5, 0) end        
-      if @cptn.arthurarmour2>0 then @sprarmour2.draw(520, 5, 0) else @sprarmour7.draw(520, 5, 0) end        
-      if @cptn.arthurarmour3>0 then @sprarmour3.draw(555, 5, 0) else @sprarmour7.draw(555, 5, 0) end        
-      if @cptn.arthurarmour4>0 then @sprarmour4.draw(485, 50, 0) else @sprarmour7.draw(485, 50, 0) end        
-      if @cptn.arthurarmour5>0 then @sprarmour5.draw(520, 50, 0) else @sprarmour7.draw(520, 50, 0) end        
-      if @cptn.arthurarmour6>0 then @sprarmour6.draw(555, 50, 0) else @sprarmour7.draw(555, 50, 0) end        
+      if @arthur.arthurarmour1>0 then @sprarmour1.draw(485, 5, 0) else @sprarmour7.draw(485, 5, 0) end        
+      if @arthur.arthurarmour2>0 then @sprarmour2.draw(520, 5, 0) else @sprarmour7.draw(520, 5, 0) end        
+      if @arthur.arthurarmour3>0 then @sprarmour3.draw(555, 5, 0) else @sprarmour7.draw(555, 5, 0) end        
+      if @arthur.arthurarmour4>0 then @sprarmour4.draw(485, 50, 0) else @sprarmour7.draw(485, 50, 0) end        
+      if @arthur.arthurarmour5>0 then @sprarmour5.draw(520, 50, 0) else @sprarmour7.draw(520, 50, 0) end        
+      if @arthur.arthurarmour6>0 then @sprarmour6.draw(555, 50, 0) else @sprarmour7.draw(555, 50, 0) end        
 
 
-      if @cptn.arthurboots1>0 then @sprboots1.draw(600, 5, 0) else @sprboots7.draw(600, 5, 0) end        
-      if @cptn.arthurboots2>0 then @sprboots2.draw(635, 5, 0) else @sprboots7.draw(635, 5, 0) end        
-      if @cptn.arthurboots3>0 then @sprboots3.draw(670, 5, 0) else @sprboots7.draw(670, 5, 0) end        
-      if @cptn.arthurboots4>0 then @sprboots4.draw(600, 50, 0) else @sprboots7.draw(600, 50, 0) end        
-      if @cptn.arthurboots5>0 then @sprboots5.draw(635, 50, 0) else @sprboots7.draw(635, 50, 0) end        
-      if @cptn.arthurboots6>0 then @sprboots6.draw(670, 50, 0) else @sprboots7.draw(670, 50, 0) end        
+      if @arthur.arthurboots1>0 then @sprboots1.draw(600, 5, 0) else @sprboots7.draw(600, 5, 0) end        
+      if @arthur.arthurboots2>0 then @sprboots2.draw(635, 5, 0) else @sprboots7.draw(635, 5, 0) end        
+      if @arthur.arthurboots3>0 then @sprboots3.draw(670, 5, 0) else @sprboots7.draw(670, 5, 0) end        
+      if @arthur.arthurboots4>0 then @sprboots4.draw(600, 50, 0) else @sprboots7.draw(600, 50, 0) end        
+      if @arthur.arthurboots5>0 then @sprboots5.draw(635, 50, 0) else @sprboots7.draw(635, 50, 0) end        
+      if @arthur.arthurboots6>0 then @sprboots6.draw(670, 50, 0) else @sprboots7.draw(670, 50, 0) end        
 
-      if @cptn.arthurstatus1>0 then @sprstatus1.draw(30, 65, 0) end        
-      if @cptn.arthurstatus2>0 then @sprstatus2.draw(55, 65, 0) end        
-      if @cptn.arthurstatus3>0 then @sprstatus3.draw(80, 65, 0) end        
-      if @cptn.arthurstatus4>0 then @sprstatus4.draw(105, 65, 0) end        
-      if @cptn.arthurstatus5>0 then @sprstatus5.draw(130, 65, 0) end        
-      if @cptn.arthurstatus6>0 then @sprstatus6.draw(155, 65, 0) end        
+      if @arthur.arthurstatus1>0 then @sprstatus1.draw(30, 65, 0) end        
+      if @arthur.arthurstatus2>0 then @sprstatus2.draw(55, 65, 0) end        
+      if @arthur.arthurstatus3>0 then @sprstatus3.draw(80, 65, 0) end        
+      if @arthur.arthurstatus4>0 then @sprstatus4.draw(105, 65, 0) end        
+      if @arthur.arthurstatus5>0 then @sprstatus5.draw(130, 65, 0) end        
+      if @arthur.arthurstatus6>0 then @sprstatus6.draw(155, 65, 0) end        
 
 
       #draw hpenergybar
 
-      draw_line(10,100,@hpbarcolor2,@cptn.arthurmaxhp+10,100,@hpbarcolor2,z=0)
-      draw_line(10,101,@hpbarcolor2,@cptn.arthurmaxhp+10,101,@hpbarcolor2,z=0)
-      draw_line(10,102,@hpbarcolor2,@cptn.arthurmaxhp+10,102,@hpbarcolor2,z=0)
-      draw_line(10,103,@hpbarcolor2,@cptn.arthurmaxhp+10,103,@hpbarcolor2,z=0)
-      draw_line(10,104,@hpbarcolor2,@cptn.arthurmaxhp+10,104,@hpbarcolor2,z=0)
-      draw_line(10,105,@hpbarcolor2,@cptn.arthurmaxhp+10,105,@hpbarcolor2,z=0)
+      draw_line(10,100,@hpbarcolor2,@arthur.arthurmaxhp+10,100,@hpbarcolor2,z=0)
+      draw_line(10,101,@hpbarcolor2,@arthur.arthurmaxhp+10,101,@hpbarcolor2,z=0)
+      draw_line(10,102,@hpbarcolor2,@arthur.arthurmaxhp+10,102,@hpbarcolor2,z=0)
+      draw_line(10,103,@hpbarcolor2,@arthur.arthurmaxhp+10,103,@hpbarcolor2,z=0)
+      draw_line(10,104,@hpbarcolor2,@arthur.arthurmaxhp+10,104,@hpbarcolor2,z=0)
+      draw_line(10,105,@hpbarcolor2,@arthur.arthurmaxhp+10,105,@hpbarcolor2,z=0)
 
 
-      draw_line(10,100,@hpbarcolor,@cptn.arthurhp+10,100,@hpbarcolor,z=0)
-      draw_line(10,101,@hpbarcolor,@cptn.arthurhp+10,101,@hpbarcolor,z=0)
-      draw_line(10,102,@hpbarcolor,@cptn.arthurhp+10,102,@hpbarcolor,z=0)
-      draw_line(10,103,@hpbarcolor,@cptn.arthurhp+10,103,@hpbarcolor,z=0)
-      draw_line(10,104,@hpbarcolor,@cptn.arthurhp+10,104,@hpbarcolor,z=0)
-      draw_line(10,105,@hpbarcolor,@cptn.arthurhp+10,105,@hpbarcolor,z=0)
+      draw_line(10,100,@hpbarcolor,@arthur.arthurhp+10,100,@hpbarcolor,z=0)
+      draw_line(10,101,@hpbarcolor,@arthur.arthurhp+10,101,@hpbarcolor,z=0)
+      draw_line(10,102,@hpbarcolor,@arthur.arthurhp+10,102,@hpbarcolor,z=0)
+      draw_line(10,103,@hpbarcolor,@arthur.arthurhp+10,103,@hpbarcolor,z=0)
+      draw_line(10,104,@hpbarcolor,@arthur.arthurhp+10,104,@hpbarcolor,z=0)
+      draw_line(10,105,@hpbarcolor,@arthur.arthurhp+10,105,@hpbarcolor,z=0)
 
       #draw mpenergybar
-      draw_line(10,110,@mpbarcolor2,@cptn.arthurmaxmp+10,110,@mpbarcolor2,z=0)
-      draw_line(10,111,@mpbarcolor2,@cptn.arthurmaxmp+10,111,@mpbarcolor2,z=0)
-      draw_line(10,112,@mpbarcolor2,@cptn.arthurmaxmp+10,112,@mpbarcolor2,z=0)
-      draw_line(10,113,@mpbarcolor2,@cptn.arthurmaxmp+10,113,@mpbarcolor2,z=0)
-      draw_line(10,114,@mpbarcolor2,@cptn.arthurmaxmp+10,114,@mpbarcolor2,z=0)
-      draw_line(10,115,@mpbarcolor2,@cptn.arthurmaxmp+10,115,@mpbarcolor2,z=0)
+      draw_line(10,110,@mpbarcolor2,@arthur.arthurmaxmp+10,110,@mpbarcolor2,z=0)
+      draw_line(10,111,@mpbarcolor2,@arthur.arthurmaxmp+10,111,@mpbarcolor2,z=0)
+      draw_line(10,112,@mpbarcolor2,@arthur.arthurmaxmp+10,112,@mpbarcolor2,z=0)
+      draw_line(10,113,@mpbarcolor2,@arthur.arthurmaxmp+10,113,@mpbarcolor2,z=0)
+      draw_line(10,114,@mpbarcolor2,@arthur.arthurmaxmp+10,114,@mpbarcolor2,z=0)
+      draw_line(10,115,@mpbarcolor2,@arthur.arthurmaxmp+10,115,@mpbarcolor2,z=0)
 
-      draw_line(10,110,@mpbarcolor,@cptn.arthurmp+10,110,@mpbarcolor,z=0)
-      draw_line(10,111,@mpbarcolor,@cptn.arthurmp+10,111,@mpbarcolor,z=0)
-      draw_line(10,112,@mpbarcolor,@cptn.arthurmp+10,112,@mpbarcolor,z=0)
-      draw_line(10,113,@mpbarcolor,@cptn.arthurmp+10,113,@mpbarcolor,z=0)
-      draw_line(10,114,@mpbarcolor,@cptn.arthurmp+10,114,@mpbarcolor,z=0)
-      draw_line(10,115,@mpbarcolor,@cptn.arthurmp+10,115,@mpbarcolor,z=0)
+      draw_line(10,110,@mpbarcolor,@arthur.arthurmp+10,110,@mpbarcolor,z=0)
+      draw_line(10,111,@mpbarcolor,@arthur.arthurmp+10,111,@mpbarcolor,z=0)
+      draw_line(10,112,@mpbarcolor,@arthur.arthurmp+10,112,@mpbarcolor,z=0)
+      draw_line(10,113,@mpbarcolor,@arthur.arthurmp+10,113,@mpbarcolor,z=0)
+      draw_line(10,114,@mpbarcolor,@arthur.arthurmp+10,114,@mpbarcolor,z=0)
+      draw_line(10,115,@mpbarcolor,@arthur.arthurmp+10,115,@mpbarcolor,z=0)
 
       @fps_check.register_tick
       @font.draw("FPS #{@fps_check.fps}", 1200, 100, 1, 1.0, 1.0, 0xffffff00)
@@ -483,19 +461,19 @@ class Artventure::Game < Window
     if @game_mode == 13
       @shopscreenimage.draw(0, 0, 0)
       @font.draw("#{$gold}" , 1110, 27,1, 1.0, 1.0, 0xff000000)
-      if $shopscreeniconpos == 1 then   @menuicon.draw(400, 230, 0) end
-      if $shopscreeniconpos == 2 then   @menuicon.draw(400, 275, 0) end
-      if $shopscreeniconpos == 3 then   @menuicon.draw(400, 325, 0) end
-      if $shopscreeniconpos == 4 then   @menuicon.draw(400, 365, 0) end
-      if $shopscreeniconpos == 5 then   @menuicon.draw(400, 405, 0) end
+      if @shop_screen_icon_pos == 1 then   @menuicon.draw(400, 230, 0) end
+      if @shop_screen_icon_pos == 2 then   @menuicon.draw(400, 275, 0) end
+      if @shop_screen_icon_pos == 3 then   @menuicon.draw(400, 325, 0) end
+      if @shop_screen_icon_pos == 4 then   @menuicon.draw(400, 365, 0) end
+      if @shop_screen_icon_pos == 5 then   @menuicon.draw(400, 405, 0) end
     end
 
     if @game_mode == 3
       @pausescreenimage.draw(0, 0, 0)
-      if $pausescreeniconpos == 1 then   @menuicon.draw(400, 220, 0) end
-      if $pausescreeniconpos == 2 then   @menuicon.draw(400, 310, 0) end
-      if $pausescreeniconpos == 3 then   @menuicon.draw(400, 395, 0) end
-      if $pausescreeniconpos == 4 then   @menuicon.draw(400, 480, 0) end
+      if @pause_screen_icon_pos == 1 then   @menuicon.draw(400, 220, 0) end
+      if @pause_screen_icon_pos == 2 then   @menuicon.draw(400, 310, 0) end
+      if @pause_screen_icon_pos == 3 then   @menuicon.draw(400, 395, 0) end
+      if @pause_screen_icon_pos == 4 then   @menuicon.draw(400, 480, 0) end
     end
 
     if @game_mode == 4
@@ -503,6 +481,7 @@ class Artventure::Game < Window
       changemusic  
     end  
   end
+  # END draw()
 
 
   def button_down(id)
@@ -512,102 +491,171 @@ class Artventure::Game < Window
         @game_mode = 0
       end
     end
-  end
 
+    if @game_mode == 5
+      if id == Button::KbSpace  or id == Button::GpButton9  then  @menupressbuttonsound.play and @game_mode = @last_game_mode  end
 
-  if @game_mode == 5 then   
-    if id == Button::KbSpace  or id == Button::GpButton9  then  @menupressbuttonsound.play and @game_mode = @last_game_mode  end
+      if id == Button::KbLeft  or id == Button::GpLeft then  @how_to_page -= 1   and @menumovesound.play end
+      if id == Button::KbRight  or id == Button::GpRight then  @how_to_page += 1 and @menumovesound.play end
 
-    if id == Button::KbLeft  or id == Button::GpLeft then  $htpgpagenum -= 1   and @menumovesound.play end
-    if id == Button::KbRight  or id == Button::GpRight then  $htpgpagenum += 1 and @menumovesound.play end
+      if @how_to_page == 0 then @how_to_page = 4 end
+      if @how_to_page == 5 then @how_to_page = 1 end
+    end
+    
+    # :shopping
+    if @game_mode == 13
+      # TODO: create class Shop that takes care of all this stuff
+      case id
+      when Button::KbJ, Button::GpButton2
+        case @shop_screen_icon_pos
+        when 1
+          if $gold < 50
+            @errorsound.play 
+          else
+            $numredpotions += 1
+            $gold -= 50
+            @buyitemsound.play
+          end
+        when 2
+          if $gold < 50
+            @errorsound.play
+          else
+            $numbluepotions += 1
+            $gold -= 50
+            @buyitemsound.play
+          end
+        end
+      end      
+      if id == Button::KbJ  or id == Button::GpButton2   and @shop_screen_icon_pos == 3 then   if $gold<50 then @errorsound.play end end
+      if id == Button::KbJ  or id == Button::GpButton2   and @shop_screen_icon_pos == 3 then  if $gold>149 then $numgoldpotions += 1 and $gold -= 150 and @buyitemsound.play end end
+      if id == Button::KbJ  or id == Button::GpButton2   and @shop_screen_icon_pos == 4 then   if $gold<80 then @errorsound.play end end
+      if id == Button::KbJ  or id == Button::GpButton2   and @shop_screen_icon_pos == 4 then  if $gold>79 then $numgreenpotions += 1 and $gold -= 80 and @buyitemsound.play end  end
+      if id == Button::KbJ  or id == Button::GpButton2   and @shop_screen_icon_pos == 5 then   if $gold<1000 then @errorsound.play end end
+      if id == Button::KbJ  or id == Button::GpButton2  and @shop_screen_icon_pos == 5 then  if $gold>999 then $arthurlives += 1 and $gold -= 1000 and @buyitemsound.play end  end
+      if id == Button::KbK  or id == Button::GpButton1  and @menupressbuttonsound.play then  @game_mode = 4  end
 
-    if $htpgpagenum == 0 then $htpgpagenum = 4 end
-    if $htpgpagenum == 5 then $htpgpagenum = 1 end
-  end
+      if id == Button::KbUp  or id == Button::GpUp then  @shop_screen_icon_pos -= 1   and @menumovesound.play end
+      if id == Button::KbDown  or id == Button::GpDown then  @shop_screen_icon_pos += 1 and @menumovesound.play end
 
-  if @game_mode == 13
-    if id == Button::KbJ  or id == Button::GpButton2   and $shopscreeniconpos == 1 then   if $gold<50 then @errorsound.play end end 
-    if id == Button::KbJ  or id == Button::GpButton2   and $shopscreeniconpos == 1 then   if $gold>49 then $numredpotions += 1 and $gold -= 50 and @buyitemsound.play end end 
-    if id == Button::KbJ  or id == Button::GpButton2   and $shopscreeniconpos == 2 then   if $gold<50 then @errorsound.play end end
-    if id == Button::KbJ  or id == Button::GpButton2   and $shopscreeniconpos == 2 then  if $gold>49 then $numbluepotions += 1 and $gold -= 50 and @buyitemsound.play end  end
-    if id == Button::KbJ  or id == Button::GpButton2   and $shopscreeniconpos == 3 then   if $gold<50 then @errorsound.play end end
-    if id == Button::KbJ  or id == Button::GpButton2   and $shopscreeniconpos == 3 then  if $gold>149 then $numgoldpotions += 1 and $gold -= 150 and @buyitemsound.play end end
-    if id == Button::KbJ  or id == Button::GpButton2   and $shopscreeniconpos == 4 then   if $gold<80 then @errorsound.play end end
-    if id == Button::KbJ  or id == Button::GpButton2   and $shopscreeniconpos == 4 then  if $gold>79 then $numgreenpotions += 1 and $gold -= 80 and @buyitemsound.play end  end
-    if id == Button::KbJ  or id == Button::GpButton2   and $shopscreeniconpos == 5 then   if $gold<1000 then @errorsound.play end end
-    if id == Button::KbJ  or id == Button::GpButton2  and $shopscreeniconpos == 5 then  if $gold>999 then $arthurlives += 1 and $gold -= 1000 and @buyitemsound.play end  end
-    if id == Button::KbK  or id == Button::GpButton1  and @menupressbuttonsound.play then  @game_mode = 4  end
+      if @shop_screen_icon_pos == 0 then @shop_screen_icon_pos = 5 end
+      if @shop_screen_icon_pos == 6 then @shop_screen_icon_pos = 1 end
+    end
 
-    if id == Button::KbUp  or id == Button::GpUp then  $shopscreeniconpos -= 1   and @menumovesound.play end
-    if id == Button::KbDown  or id == Button::GpDown then  $shopscreeniconpos += 1 and @menumovesound.play end
+    if @game_mode == 3
+      if id == Button::KbSpace  or id == Button::GpButton9  and @unpausebuttonsound.play and @pause_screen_icon_pos == 1 then  @game_mode = 4  end
+      if id == Button::KbSpace  or id == Button::GpButton9  and @menupressbuttonsound.play and @pause_screen_icon_pos == 2 then  @game_mode = 5 and @last_game_mode = 12  end
+      if id == Button::KbSpace  or id == Button::GpButton9  and @menupressbuttonsound.play and @pause_screen_icon_pos == 4 then  @game_mode = 0  end
 
-    if $shopscreeniconpos == 0 then $shopscreeniconpos = 5 end
-    if $shopscreeniconpos == 6 then $shopscreeniconpos = 1 end
-  end
+      if id == Button::KbUp  or id == Button::GpUp then  @pause_screen_icon_pos -= 1   and @menumovesound.play end
+      if id == Button::KbDown  or id == Button::GpDown then  @pause_screen_icon_pos += 1 and @menumovesound.play end
 
-  if @game_mode == 3
-    if id == Button::KbSpace  or id == Button::GpButton9  and @unpausebuttonsound.play and $pausescreeniconpos == 1 then  @game_mode = 4  end
-    if id == Button::KbSpace  or id == Button::GpButton9  and @menupressbuttonsound.play and $pausescreeniconpos == 2 then  @game_mode = 5 and @last_game_mode = 12  end
-    if id == Button::KbSpace  or id == Button::GpButton9  and @menupressbuttonsound.play and $pausescreeniconpos == 4 then  @game_mode = 0  end
+      if @pause_screen_icon_pos == 0 then @pause_screen_icon_pos = 4 end
+      if @pause_screen_icon_pos == 5 then @pause_screen_icon_pos = 1 end
+    end
 
-    if id == Button::KbUp  or id == Button::GpUp then  $pausescreeniconpos -= 1   and @menumovesound.play end
-    if id == Button::KbDown  or id == Button::GpDown then  $pausescreeniconpos += 1 and @menumovesound.play end
+    if @game_mode == 1
+      if id == Button::KbSpace  or id == Button::GpButton9  and @title_screen_icon_pos == 1 then  @menupressbuttonsound.play and $currentarea = 1 and @game_mode = 11  end
+      if id == Button::KbSpace  or id == Button::GpButton9  and @title_screen_icon_pos == 3 then  @menupressbuttonsound.play and @game_mode = 5 and @last_game_mode = 0 end
+      if id == Button::KbSpace  or id == Button::GpButton9  and @title_screen_icon_pos == 5 then  @menupressbuttonsound.play and @game_mode = 6 end
+      if id == Button::KbEscape  or id == Button::KbSpace  or id == Button::GpButton9  and @title_screen_icon_pos == 6 then close end
+      if id == Button::KbEscape  then close end
+      if id == Button::KbUp  or id == Button::GpUp then  @title_screen_icon_pos -= 1   and @menumovesound.play end
+      if id == Button::KbDown  or id == Button::GpDown then  @title_screen_icon_pos += 1 and @menumovesound.play end
 
-    if $pausescreeniconpos == 0 then $pausescreeniconpos = 4 end
-    if $pausescreeniconpos == 5 then $pausescreeniconpos = 1 end
-  end
+      if @title_screen_icon_pos == 0 then @title_screen_icon_pos = 6 end
+      if @title_screen_icon_pos == 7 then @title_screen_icon_pos = 1 end
+    end
 
-  if @game_mode == 1
-    if id == Button::KbSpace  or id == Button::GpButton9  and $titlescreeniconpos == 1 then  @menupressbuttonsound.play and $currentarea = 1 and @game_mode = 11  end
-    if id == Button::KbSpace  or id == Button::GpButton9  and $titlescreeniconpos == 3 then  @menupressbuttonsound.play and @game_mode = 5 and @last_game_mode = 0 end
-    if id == Button::KbSpace  or id == Button::GpButton9  and $titlescreeniconpos == 5 then  @menupressbuttonsound.play and @game_mode = 6 end
-    if id == Button::KbEscape  or id == Button::KbSpace  or id == Button::GpButton9  and $titlescreeniconpos == 6 then close end
-    if id == Button::KbEscape  then close end
-    if id == Button::KbUp  or id == Button::GpUp then  $titlescreeniconpos -= 1   and @menumovesound.play end
-    if id == Button::KbDown  or id == Button::GpDown then  $titlescreeniconpos += 1 and @menumovesound.play end
-
-    if $titlescreeniconpos == 0 then $titlescreeniconpos = 6 end
-    if $titlescreeniconpos == 7 then $titlescreeniconpos = 1 end
-  end
-
-  if @game_mode == 10 then   
-
-  end
-
-  if @game_mode == 2 then 
-    if id== Button::KbUp or id == Button::GpButton2 or id == Button::KbC then @cptn.try_to_jump end
-    if id == Button::KbZ or id == Button::GpButton3 or id == Button::KbReturn or id == Button::MsMiddle then @cptn.useitem end
-      if id == Button::KbQ or id == Button::KbNumpad9 or id == Button::GpButton5 or id == Button::MsWheelDown and $selectedgroup == 1 then @cptn.changeitemforward end
-      if id == Button::KbA or id == Button::KbNumpad3  or id == Button::GpButton4 or id == Button::MsWheelUp and $selectedgroup == 1 then @cptn.changeitembackward end
-
-      if id == Button::KbW or id == Button::KbNumpad7 or id == Button::GpButton7 then $selectedgroup += 1 end
-      if id == Button::KbS or id == Button::KbNumpad1  or id == Button::GpButton6 then $selectedgroup -= 1 end
-
-      if $selectedgroup == 0 then $selectedgroup = 5 end
-      if $selectedgroup == 6 then $selectedgroup = 1 end
-
-      if id == Button::KbSpace  or id == Button::GpButton9
+    # :playing
+    if @game_mode == 2
+      case id
+      when Button::KbUp, Button::GpButton2, Button::KbC
+        @arthur.try_to_jump
+      when Button::KbZ, Button::GpButton3, Button::KbReturn, Button::MsMiddle
+        @arthur.useitem
+      when Button::KbQ, Button::KbNumpad9, Button::GpButton5, Button::MsWheelDown
+        @arthur.changeitemforward if @selectedgroup == 1
+      when Button::KbA, Button::KbNumpad3, Button::GpButton4, Button::MsWheelUp
+        @arthur.changeitembackward if @selectedgroup == 1
+      when Button::KbW, Button::KbNumpad7, Button::GpButton7
+        @selectedgroup += 1
+      when Button::KbS, Button::KbNumpad1, Button::GpButton6
+        @selectedgroup -= 1
+      when Button::KbSpace, Button::GpButton9
         pausemusic
         @pausebuttonsound.play 
         @game_mode = 3
-      end
-
-      # touching_shop should be method (maybe on Character)
-      if $touchingshop == 1 and id == Button::KbUp or id == Button::GpUp
-        pausemusic
-        @pausebuttonsound.play 
-        @game_mode = 13
-      end
-
-      if id == Button::KbEscape
+      when Button::KbUp, Button::GpUp
+        # touching_shop should be method (maybe on Character)  
+        if $touchingshop == 1
+          pausemusic
+          @pausebuttonsound.play 
+          @game_mode = 13
+        end
+      when Button::KbEscape
         @game_mode = 1
-        $titlescreenmusicogg.play(looping = true)
+        @songs[:title_screen].play(looping = true)
       end
+
+      @selectedgroup = 5 if @selectedgroup == 0
+      @selectedgroup = 1 if @selectedgroup == 6
     end
 
-    if @game_mode == 12 then   
+    if @game_mode == 10
+    end
+    
+    # TODO: wtf?
+    if @game_mode == 12
       @game_mode = 3 
     end
+  end
+  
+  
+  # Music
+  def changemusic
+    # TODO: make looping default to true or create e.g. play_loop for convenience
+    case @arthur.current_area
+    when 1..5
+      @songs[:normal_area].play(looping = true)
+    when 6
+      @songs[:ice_area].play(true)
+    when 7
+      @songs[:fire_area].play(true)
+    when 8
+      @songs[:normal_area].play(true)
+    when 9
+      @songs[:evil_area].play(true)
+    end
+  end
+
+  def pausemusic
+    area = case @arthur.current_area
+    when 1..5 then :normal_area
+    when 6    then :ice_area
+    when 7    then :fire_area
+    when 8    then :normal_area
+    when 9    then :evil_area
+    when 10   then :fire_area
+    when 11   then :ice_area
+    when 12   then :lightning_area
+    when 13   then :ground_area
+    when 15   then :evil_area
+    end
+    @songs[area].pause
+  end
+  
+  
+  private
+  
+  def load_music
+    @songs = {}
+    @songs[:title_screen]   = @resources.song("ArthurTheme.ogg", 0.15)
+    @songs[:normal_area]    = @resources.song("NormalRealm.ogg", 0.15)
+    @songs[:fire_area]      = @resources.song("FireRealm.mid", 0.15)
+    @songs[:ice_area]       = @resources.song("IceRealm.ogg", 0.20)
+    @songs[:lightning_area] = @resources.song("NormalRealm.ogg", 0.15)
+    @songs[:ground_area]    = @resources.song("PoisonRealm.ogg", 0.60)
+    @songs[:evil_area]      = @resources.song("EvilRealm.mid", 0.60)
   end
   
 end # end class Game
