@@ -1,40 +1,5 @@
 module Artventure
 
-
-  # visible on the screen with x and y coordinates and images
-  module Sprite
-    attr_accessor :x, :y, :image, :currentarea
-  end
-  
-  
-  # A create has many attributes like health or mana
-  # TODO: experience could also be an Attribute
-  class Attribute < Struct.new(:name, :value, :max)
-  end
-  
-  # A player controlled or cpu-controlled creature on the screen
-  # TODO: health will be of class Attribute, and rename to health and mana
-  class Creature < Struct.new(:arthurhp, :arthurmaxhp, :arthurmp, :arthurmaxmp)
-    include Sprite
-    
-  end
-  
-  
-  # Potions and Gold could be Equipment as well as Armor and Weapons
-  # IDEA: give gold and potions weight. maybe allow money notes or something later to carry more gold in a lighter way
-  class Equipment < Struct.new(:name, :type, :weight, :worth)
-    
-  end
-
-
-  # The human player playing the game, not Arthur the hero
-  # Will be the base for possibly multiplayer
-  class Player < Struct.new(:name, :character)
-    # Each Player embodies one character
-  end
-  
-  
-  # Player class.
   class Arthur < Creature
                 
     attr_reader :selecteditem
@@ -148,6 +113,37 @@ module Artventure
       @window = window
     end
  
+ 
+    def setnewgamevars
+      @dir = :right
+      @x, @y = 600, 345
+      @checkpointx, @checkpointy, @checkpointarea = @x, @y, 1
+      $gold = 0
+      $touchingshop = 0
+      #$currentarea = 0
+      @selecteditem = 1
+      @arthurfiredamage = 0
+      $numredpotions, $numbluepotions, $numgreenpotions,  $numgoldpotions = 0,0,0,0
+      @arthurhp, @arthurmaxhp, @arthurmp, @arthurmaxmp  = 50,50,20,20
+      @arthurweaponattboost  = 0
+  
+      @arthurweapon1, @arthurweapon2, @arthurweapon3, @arthurweapon4, @arthurweapon5, @arthurweapon6 = 1,0,0,0,0,0
+      @arthurarmour1, @arthurarmour2, @arthurarmour3, @arthurarmour4, @arthurarmour5, @arthurarmour6 = 1,0,0,0,0,0
+      @arthurboots1, @arthurboots2, @arthurboots3, @arthurboots4, @arthurboots5, @arthurboots6 = 1,0,0,0,0,0
+      @arthurstatus1, @arthurstatus2, @arthurstatus3, @arthurstatus4, @arthurstatus5, @arthurstatus6 = 0,0,0,0,0,0
+    
+      @arthurfiredefenceboost, @arthuricedefenceboost,  @arthurlightningdefenceboost = 0,0,0,0
+      @arthurearthdefenceboost, @arthurevildefenceboost, @arthurpsysicaldefenceboost = 0,0,0,0,0
+
+      @arthurfiremagicboost, @arthuricemagicboost, @arthurlightningmagicboost = 0,0,0
+      @arthurearthmagicboost, @arthurevilmagicboost = 0,0
+
+      @arthurexp, @arthurlevel, $arthurlives = 0,1,3
+      @arthurhprestore, @arthurmprestore ,@arthurpoisoned  = 0,0,0
+      @armourvyweight = 18
+    end
+    
+    # DRAW
     def draw(screen_x, screen_y)
       # Flip vertically when facing to the left.
       if $dir == :left then
@@ -166,7 +162,9 @@ module Artventure
       if @selecteditem == 3 then @sprselecteditembox.draw(108, 10, 0) end
       if @selecteditem == 4 then @sprselecteditembox.draw(152, 10, 0) end
     end
- 
+
+
+    # TODO: @map should be set once somewhere before and not in the would_fit handler. this method should have two lines.
     def would_fit(offs_x, offs_y)
       # Check at the center/top and center/bottom for map collisions
       if $currentarea == 1 then @map = $area1map end
@@ -291,38 +289,9 @@ module Artventure
       s.remove?
     end
 
-    def setnewgamevars
-      $x, $y = x, y
-      $dir = :right
-      $x, $y = 600, 345
-      @checkpointx,@checkpointy,@checkpointarea = 600,345,1
-      $gold = 0
-      $touchingshop = 0
-      #$currentarea = 0
-      @selecteditem = 1
-      @arthurfiredamage = 0
-      $numredpotions, $numbluepotions, $numgreenpotions,  $numgoldpotions = 0,0,0,0
-      @arthurhp, @arthurmaxhp, @arthurmp, @arthurmaxmp  = 50,50,20,20
-      @arthurweaponattboost  = 0
-  
-      @arthurweapon1, @arthurweapon2, @arthurweapon3, @arthurweapon4, @arthurweapon5, @arthurweapon6 = 1,0,0,0,0,0
-      @arthurarmour1, @arthurarmour2, @arthurarmour3, @arthurarmour4, @arthurarmour5, @arthurarmour6 = 1,0,0,0,0,0
-      @arthurboots1, @arthurboots2, @arthurboots3, @arthurboots4, @arthurboots5, @arthurboots6 = 1,0,0,0,0,0
-      @arthurstatus1, @arthurstatus2, @arthurstatus3, @arthurstatus4, @arthurstatus5, @arthurstatus6 = 0,0,0,0,0,0
-    
-      @arthurfiredefenceboost, @arthuricedefenceboost,  @arthurlightningdefenceboost = 0,0,0,0
-      @arthurearthdefenceboost, @arthurevildefenceboost, @arthurpsysicaldefenceboost = 0,0,0,0,0
-
-      @arthurfiremagicboost, @arthuricemagicboost, @arthurlightningmagicboost = 0,0,0
-      @arthurearthmagicboost, @arthurevilmagicboost = 0,0
-
-      @arthurexp, @arthurlevel, $arthurlives = 0,1,3
-      @arthurhprestore, @arthurmprestore ,@arthurpoisoned  = 0,0,0
-      @armourvyweight = 18
-    end
-
- 
+    # TODO: remove this method (refactored to Creature#use)
     def useitem
+      # TODO: use at least :symbols instead of numbers
       if @selecteditem == 1  and $numredpotions>0   and @arthurhp!=@arthurmaxhp then @arthurhp=@arthurmaxhp and $numredpotions -= 1 and @usepotion.play end 
       if @selecteditem == 2  and $numbluepotions>0  and @arthurmp!=@arthurmaxmp then @arthurmp=@arthurmaxmp and $numbluepotions -= 1 and @usepotion.play end 
   
@@ -330,12 +299,13 @@ module Artventure
   
       if @selecteditem == 4  and $numgreenpotions>0   and @arthurstatus5!=0 then @arthurstatus5=0  and @usepotion.play and $numgreenpotions -= 1 end 
     end
-  
+    
+    # TODO: Extract to creature
     def changeitemforward
       @selecteditem += 1
       if @selecteditem > 4 then @selecteditem = 1 end
     end
- 
+    # TODO: Extract to creature
     def changeitembackward
       @selecteditem -= 1
       if @selecteditem < 1 then @selecteditem = 4 end
@@ -575,6 +545,5 @@ module Artventure
     end
         
   end # END Arthur
-  
   
 end

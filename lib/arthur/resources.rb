@@ -28,8 +28,12 @@ class Artventure::Resources
     end
   end
   
-  def image(filename, image_options = false)
-    ALL[:image][filename] ||= load_image(filename, image_options)
+  def image(filename, option_flag = false)
+    ALL[:image][filename] ||= load_image(filename, option_flag)
+  end
+
+  def frames(filename, width, height, option_flag = false)
+    ALL[:frames] ||= load_frames(filename, width, height, option_flag)
   end
   
   def song(filename, volume = nil)
@@ -51,10 +55,18 @@ class Artventure::Resources
   
   
   # These methods should not be used directly (they will reload the image, instead of getting them out of the cache ALL)
-  def load_image(filename, image_options = false)
-    Image.new(@window, DATA_PATH+'/'+filename, image_options)
+  def load_image(filename, option_flag = false)
+    Image.new(@window, DATA_PATH+'/'+filename, option_flag)
   end
 
+  def load_frames(filename, width, height, option_flag)
+    if width and height
+      frames = Image.load_tiles(@window, "#{DATA_PATH}/#{filename}", width, height, option_flag)
+    else
+      frames = [load_image(filename)] # TODO: check if option_flag for Image.new and Image.load_tiles is the same
+    end
+  end
+  
   def load_song(filename, volume = nil)
     path = (filename =~ '\.ogg$') ? "OGG" : "Midi"
     song = Gosu::Song.new(@window, "#{DATA_PATH}/music/#{path}/#{filename}")
@@ -62,6 +74,7 @@ class Artventure::Resources
     song
   end
   
+  # TODO: see if there's a usage for options, else remove it from arguments
   def load_sfx(filename, options)
     Gosu::Sample.new(@window, "#{DATA_PATH}/sfx/#{filename}")  
   end
@@ -86,5 +99,3 @@ class Artventure::Resources
     end
   end
 end
-
-

@@ -1,5 +1,7 @@
 class Artventure::Game < Window
-  attr_reader :map,
+  attr_reader :resources,
+              :player,
+              :map,
               :gamexres,
               :gameyres,
               :gamemode,
@@ -15,7 +17,6 @@ class Artventure::Game < Window
   def initialize
     # - @gamexres, @gameyres = 1280, 800
     super(@gamexres = 1280, @gameyres = 800, true)
-
 
     @rannum = 1
     @last_game_mode = 1
@@ -69,9 +70,6 @@ class Artventure::Game < Window
 
     @how_to_page = 1
     @fps_check = FPSCounter.new()
-
-    @arthur = Arthur.new(self, 400, 100)
-
     # Colors
     @colors = {}
     @colors[:hp_bar] = @resources.color(:red)
@@ -85,6 +83,13 @@ class Artventure::Game < Window
     
     # Scrolling is stored as the position of the top left corner of the screen.
     @screen_x = @screen_y = 0
+
+
+    @arthur = Arthur.new(self, 400, 100)
+    
+    @players = []
+    @players << Player.new("Player 1", @arthur)
+    # TODO: maybe a 2nd player could join to move enemies? that would be neat
   end
 
 
@@ -649,7 +654,7 @@ class Artventure::Game < Window
   
   def load_music
     @songs = {}
-    @songs[:title_screen]   = @resources.song("ArthurTheme.ogg", 0.15)
+    @songs[:title_screen]   = @resources.song("ArthurTheme.ogg", volume = 0.15)
     @songs[:normal_area]    = @resources.song("NormalRealm.ogg", 0.15)
     @songs[:fire_area]      = @resources.song("FireRealm.mid", 0.15)
     @songs[:ice_area]       = @resources.song("IceRealm.ogg", 0.20)

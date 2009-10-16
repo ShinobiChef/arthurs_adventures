@@ -1,12 +1,7 @@
-# TODO: assign images to corresponding Sprites declaratively
+# TODO: assign images below to corresponding Sprites declaratively, e.g. image "items/wizardred.png"
 #
 # @spritembox = Resource["items/statsbox.png", true]
 # @sprstatsbanner = Resource["data/backgrounds/statsbanner.png", true]
-# gold_img = Resource['items/gold3']
-
-# shop_img = Image.new(window, "data/items/wizardred.png", false)
-# helmet_img = Image.new(window, "data/items/helmet.png", false)
-# firecrystal_img = Image.new(window, "data/items/crystalfire.png", false)
 # firebook_img = Image.new(window, "data/items/bookfire.png", false)
 # icecrystal_img = Image.new(window, "data/items/crystalice.png", false)
 # icebook_img = Image.new(window, "data/items/bookice.png", false)
@@ -14,7 +9,6 @@
 # lightningbook_img = Image.new(window, "data/items/booklightning.png", false)
 # earthcrystal_img = Image.new(window, "data/items/crystalearth.png", false)
 # earthbook_img = Image.new(window, "data/items/bookground.png", false)
-# sign_img = Image.new(window, "data/items/sign2-small.png", false)
 # evilbook_img = Image.new(window, "data/items/bookevil.png", false)
 # swordsandgreyshield_img = Image.new(window, "data/items/2swordsandgreyshield.png", false)
 # tree1_img = Image.new(window, "data/items/tree1.png", false)
@@ -23,10 +17,6 @@
 # tree4_img = Image.new(window, "data/items/tree4.png", false)
 # groundareagate_img = Image.new(window, "data/items/caveofground.png", false)
 # house1_img = Image.new(window, "data/items/house1.png", false)
-# greenpotion_img = Image.new(window, "data/items/largegreenpotion.png", false)
-# bluepotion_img = Image.new(window, "data/items/largebluepotion.png", false)
-# redpotion_img = Image.new(window, "data/items/largeredpotion.png", false)
-# goldpotion_img = Image.new(window, "data/items/largegoldpotion.png", false)
 # 
 # fire_img = Image.new(window, "data/enemys/fire.png", false)
 # snake_img = Image.new(window, "data/enemys/snake.png", false)
@@ -36,67 +26,138 @@
 # powerupsword_img = Image.new(window, "data/items/powerupsword2.png", false)
 
 module Artventure
+  # TODO: maybe create class Inventory to hold all this stuff (i.e. each creature has an inventory for loot and own usage)
 
-  # TODO: maybe rename to Equipment
-  class Collectable
-    include Sprite
-  end
-
-
+  # Collectables
   class Gold < Collectable
-    IMAGE = 'items/gold3'  
+    image 'items/gold3'
+  end
+  
+  # TODO: should shop really be a collectable?
+  class Shop < Collectable
+    image "items/wizardred.png"
+  end
+
+  class Sign < Collectable
+    image "items/sign2-small.png"
   end
 
 
-  # TODO: refactor below like Gold class above
-  # test, test, test
+  # Items
+  class RedPotion < Item
+    image "items/largeredpotion.png"
+    
+    def effect!(creature)
+      destroy! if creature.apply_effect(:restore_health)
+    end    
+  end
 
-  class CollectibleGold
-    attr_reader :x, :y
- 
-    def initialize(image, x, y)
-      @image = image
-      @x, @y = x, y
-      @initTime = Gosu::milliseconds #the the milliseconds when created
-      @delay = (rand 100)+1 #add a delay to the time so they move differently
+  class BluePotion < Item
+    image "items/largebluepotion.png"
+
+    def effect!(creature)
+      destroy! if creature.apply_effect(:restore_mana)
     end
- 
-    #thisTime is the golds own independant time so they all move differently.
-    #quite handy in independant animations like on-the-spot explosions.
-    def thisTime
-      Gosu::milliseconds - @initTime/@delay
+  end
+
+  class GoldPotion < Item
+    image "items/largegoldpotion.png"
+    
+    def effect!(creature)
+      destroy! if creature.apply_effect(:restore_health) | creature.apply_effect(:restore_mana)      
     end
- 
+  end
+
+  class GreenPotion < Item
+    image "items/largegreenpotion.png"
+    
+    def effect!(creature)
+      destroy! if creature.apply_effect(:restore_status)      
+    end
+  end
+  
+  # Equipment
+  class Helmet < Equipment
+    image "items/helmet.png"    
+    name   "Leather Helmet"
+    type   :helmet
+    weight 1
+    worth  10
+    
     def draw(screen_x, screen_y)
-      animate(:nothing, screen_x, screen_y)
+      # Draw, slowly rotating
+      animate(:rotate_slowly, screen_x, screen_y)
     end
   end
 
-  class Collectibleshop
-    attr_reader :x, :y
- 
-    def initialize(image, x, y)
-      @image = image
-      @x, @y = x, y
-      @initTime = Gosu::milliseconds #the the milliseconds when created
-      @delay = (rand 100)+1 #add a delay to the time so they move differently
-    end
- 
-    #thisTime is the golds own independant time so they all move differently.
-    #quite handy in independant animations like on-the-spot explosions.
-    def thisTime
-      Gosu::milliseconds - @initTime/@delay
-    end
- 
+  # TODO: should those crystals and books be Items or Equipment?
+  class FireCrystal < Equipment
+    image "items/crystalfire.png"
+    
     def draw(screen_x, screen_y)
-     # Draw, slowly rotating
-      @image.draw_rot(@x - screen_x, @y - screen_y, 0,
-        0)
+      # Draw, slowly rotating
+      animate(:rotate_slowly, screen_x, screen_y)
+    end
+  end
+
+  class FireBook < Equipment
+    image "items/crystalfire.png"
+    
+    def draw(screen_x, screen_y)
+      # Draw, slowly rotating
+      animate(:rotate_slowly, screen_x, screen_y)
+    end
+  end
+
+  class IceCrystal < Equipment
+    image "items/crystalice.png"
+    
+    def draw(screen_x, screen_y)
+      # Draw, slowly rotating
+      animate(:rotate_slowly, screen_x, screen_y)
+    end
+  end
+
+  class IceBook < Equipment
+    image "items/crystalfire.png"
+    
+    def draw(screen_x, screen_y)
+      # Draw, slowly rotating
+      animate(:rotate_slowly, screen_x, screen_y)
+    end
+  end
+
+  class LightningCrystal < Equipment
+    image "items/chrystallightning.png"
+    
+    def draw(screen_x, screen_y)
+      # Draw, slowly rotating
+      animate(:rotate_slowly, screen_x, screen_y)
+    end
+  end
+
+  class LightningBook < Equipment
+    image "items/booklightning.png"
+    
+    def draw(screen_x, screen_y)
+      # Draw, slowly rotating
+      animate(:rotate_slowly, screen_x, screen_y)
+    end
+  end
+
+  
+  class EarthCrystal < Equipment
+    image "items/chrystalearth.png"
+    
+    def draw(screen_x, screen_y)
+      # Draw, slowly rotating
+      animate(:rotate_slowly, screen_x, screen_y)
     end
   end
 
 
-  class Collectiblehelmet
+  # TODO: Refactor classes like above (it's fun, you can kill 90% of the lines)
+  class EarthBook
     attr_reader :x, :y
  
     def initialize(image, x, y)
@@ -118,7 +179,7 @@ module Artventure
     end
   end
 
-  class Collectiblefirecrystal
+  class EvilBook
     attr_reader :x, :y
  
     def initialize(image, x, y)
@@ -140,207 +201,7 @@ module Artventure
     end
   end
 
-  class Collectiblefirebook
-    attr_reader :x, :y
- 
-    def initialize(image, x, y)
-      @image = image
-      @x, @y = x, y
-      @initTime = Gosu::milliseconds #the the milliseconds when created
-      @delay = (rand 100)+1 #add a delay to the time so they move differently
-    end
- 
-    #thisTime is the golds own independant time so they all move differently.
-    #quite handy in independant animations like on-the-spot explosions.
-    def thisTime
-      Gosu::milliseconds - @initTime/@delay
-    end
- 
-    def draw(screen_x, screen_y)
-      # Draw, slowly rotating
-      animate(:rotate_slowly, screen_x, screen_y)
-    end
-  end
-
-  class Collectibleicecrystal
-    attr_reader :x, :y
- 
-    def initialize(image, x, y)
-      @image = image
-      @x, @y = x, y
-      @initTime = Gosu::milliseconds #the the milliseconds when created
-      @delay = (rand 100)+1 #add a delay to the time so they move differently
-    end
- 
-    #thisTime is the golds own independant time so they all move differently.
-    #quite handy in independant animations like on-the-spot explosions.
-    def thisTime
-      Gosu::milliseconds - @initTime/@delay
-    end
- 
-    def draw(screen_x, screen_y)
-      # Draw, slowly rotating
-      animate(:rotate_slowly, screen_x, screen_y)
-    end
-  end
-
-  class Collectibleicebook
-    attr_reader :x, :y
- 
-    def initialize(image, x, y)
-      @image = image
-      @x, @y = x, y
-      @initTime = Gosu::milliseconds #the the milliseconds when created
-      @delay = (rand 100)+1 #add a delay to the time so they move differently
-    end
- 
-    #thisTime is the golds own independant time so they all move differently.
-    #quite handy in independant animations like on-the-spot explosions.
-    def thisTime
-      Gosu::milliseconds - @initTime/@delay
-    end
- 
-    def draw(screen_x, screen_y)
-      # Draw, slowly rotating
-      animate(:rotate_slowly, screen_x, screen_y)
-    end
-  end
-
-  class Collectiblelightningcrystal
-    attr_reader :x, :y
- 
-    def initialize(image, x, y)
-      @image = image
-      @x, @y = x, y
-      @initTime = Gosu::milliseconds #the the milliseconds when created
-      @delay = (rand 100)+1 #add a delay to the time so they move differently
-    end
- 
-    #thisTime is the golds own independant time so they all move differently.
-    #quite handy in independant animations like on-the-spot explosions.
-    def thisTime
-      Gosu::milliseconds - @initTime/@delay
-    end
- 
-    def draw(screen_x, screen_y)
-      # Draw, slowly rotating
-      animate(:rotate_slowly, screen_x, screen_y)
-    end
-  end
-
-  class Collectiblelightningbook
-    attr_reader :x, :y
- 
-    def initialize(image, x, y)
-      @image = image
-      @x, @y = x, y
-      @initTime = Gosu::milliseconds #the the milliseconds when created
-      @delay = (rand 100)+1 #add a delay to the time so they move differently
-    end
- 
-    #thisTime is the golds own independant time so they all move differently.
-    #quite handy in independant animations like on-the-spot explosions.
-    def thisTime
-      Gosu::milliseconds - @initTime/@delay
-    end
- 
-    def draw(screen_x, screen_y)
-      # Draw, slowly rotating
-      animate(:rotate_slowly, screen_x, screen_y)
-    end
-  end
-
-  class Collectibleearthcrystal
-    attr_reader :x, :y
- 
-    def initialize(image, x, y)
-      @image = image
-      @x, @y = x, y
-      @initTime = Gosu::milliseconds #the the milliseconds when created
-      @delay = (rand 100)+1 #add a delay to the time so they move differently
-    end
- 
-    #thisTime is the golds own independant time so they all move differently.
-    #quite handy in independant animations like on-the-spot explosions.
-    def thisTime
-      Gosu::milliseconds - @initTime/@delay
-    end
- 
-    def draw(screen_x, screen_y)
-      # Draw, slowly rotating
-      animate(:rotate_slowly, screen_x, screen_y)
-    end
-  end
-
-  class Collectibleearthbook
-    attr_reader :x, :y
- 
-    def initialize(image, x, y)
-      @image = image
-      @x, @y = x, y
-      @initTime = Gosu::milliseconds #the the milliseconds when created
-      @delay = (rand 100)+1 #add a delay to the time so they move differently
-    end
- 
-    #thisTime is the golds own independant time so they all move differently.
-    #quite handy in independant animations like on-the-spot explosions.
-    def thisTime
-      Gosu::milliseconds - @initTime/@delay
-    end
- 
-    def draw(screen_x, screen_y)
-      # Draw, slowly rotating
-      animate(:rotate_slowly, screen_x, screen_y)
-    end
-  end
-
-
-  class Sign
-    attr_reader :x, :y
- 
-    def initialize(image, x, y)
-      @image = image
-      @x, @y = x, y
-      @initTime = Gosu::milliseconds #the the milliseconds when created
-      @delay = (rand 100)+1 #add a delay to the time so they move differently
-    end
- 
-    #thisTime is the golds own independant time so they all move differently.
-    #quite handy in independant animations like on-the-spot explosions.
-    def thisTime
-      Gosu::milliseconds - @initTime/@delay
-    end
- 
-    def draw(screen_x, screen_y)
-      # Draw, slowly rotating
-      @image.draw_rot(@x - screen_x, @y - screen_y, 0,
-        0)
-    end
-  end
-
-  class Collectibleevilbook
-    attr_reader :x, :y
- 
-    def initialize(image, x, y)
-      @image = image
-      @x, @y = x, y
-      @initTime = Gosu::milliseconds #the the milliseconds when created
-      @delay = (rand 100)+1 #add a delay to the time so they move differently
-    end
- 
-    #thisTime is the golds own independant time so they all move differently.
-    #quite handy in independant animations like on-the-spot explosions.
-    def thisTime
-      Gosu::milliseconds - @initTime/@delay
-    end
- 
-    def draw(screen_x, screen_y)
-      # Draw, slowly rotating
-      animate(:rotate_slowly, screen_x, screen_y)
-    end
-  end
-
-  class Collectibleswordsandgreyshield
+  class swordsandgreyshield
     attr_reader :x, :y
  
     def initialize(image, x, y)
@@ -386,7 +247,7 @@ module Artventure
   end
 
 
-  class Collectibletree2
+  class tree2
     attr_reader :x, :y
  
     def initialize(image, x, y)
@@ -410,7 +271,7 @@ module Artventure
   end
 
 
-  class Collectibletree3
+  class tree3
     attr_reader :x, :y
  
     def initialize(image, x, y)
@@ -434,7 +295,7 @@ module Artventure
   end
 
 
-  class Collectibletree4
+  class tree4
     attr_reader :x, :y
  
     def initialize(image, x, y)
@@ -457,7 +318,7 @@ module Artventure
     end
   end
 
-  class Collectiblegroundareagate
+  class groundareagate
     attr_reader :x, :y
  
     def initialize(image, x, y)
@@ -481,7 +342,7 @@ module Artventure
   end
 
 
-  class Collectiblehouse1
+  class house1
     attr_reader :x, :y
  
     def initialize(image, x, y)
@@ -504,7 +365,7 @@ module Artventure
     end
   end
 
-  class Collectiblebluepotion
+  class bluepotion
     attr_reader :x, :y
  
     def initialize(image, x, y)
@@ -527,7 +388,7 @@ module Artventure
     end
   end
 
-  class Collectiblegreenpotion
+  class greenpotion
     attr_reader :x, :y
  
     def initialize(image, x, y)
@@ -574,7 +435,7 @@ module Artventure
     end
   end
 
-   class Collectibleredpotion
+   class redpotion
     attr_reader :x, :y
  
     def initialize(image, x, y)
@@ -597,7 +458,7 @@ module Artventure
     end
   end
  
-   class CollectibleGoldPotion
+   class GoldPotion
     attr_reader :x, :y
  
     def initialize(image, x, y)
@@ -620,7 +481,7 @@ module Artventure
     end
   end
 
-  class Collectiblegreyshield
+  class greyshield
     attr_reader :x, :y
 
     def initialize(image, x, y)
