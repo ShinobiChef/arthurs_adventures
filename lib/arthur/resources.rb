@@ -2,7 +2,7 @@
 # Use like: image = Resource['items/gold3']
 class Artventure::Resources
   ALL = {}
-  TYPES = [:image, :song, :sfx, :color]
+  TYPES = [:images, :songs, :sfx, :colors, :frames, :tiles, :fonts]
   TYPES.each{|type| ALL[type] = {} }
   
   DEFAULT_COLORS = {
@@ -11,6 +11,13 @@ class Artventure::Resources
     :blue  => "0000ff",
     :black => "000000",
     :white => "ffffff"
+  }
+  
+  DEFAULT_FONT_SIZES[] = {
+    :default => 20,
+    :small   => 14,
+    :title   => 45,
+    :credits => 30
   }
   
   def initialize(window)
@@ -29,30 +36,38 @@ class Artventure::Resources
   end
   
   def image(filename, option_flag = false)
-    ALL[:image][filename] ||= load_image(filename, option_flag)
+    ALL[:images][filename] ||= load_image(filename, option_flag)
   end
 
   def frames(filename, width, height, option_flag = false)
     ALL[:frames] ||= load_frames(filename, width, height, option_flag)
   end
+
+  def tiles(filename, width, height, option_flag = true)
+    ALL[:tiles] ||= load_frames(filename, width, height, option_flag)
+  end
   
   def song(filename, volume = nil)
-    ALL[:song][filename] ||= load_song(filename, volume)
+    ALL[:songs][filename] ||= load_song(filename, volume)
   end
 
   def sfx(filename, options = nil)
     ALL[:sfx][filename] ||= load_sfx(filename, options)
   end
 
-  def color(red, green = nil, blue = nil)
-    ALL[:color][hex_for_rgb(red, green, blue)] ||= load_color(red, green, blue)
+  def font(name, type = nil)
+    type = Gosu::default_font_name if type.nil?
+    ALL[:fonts][name] ||= load_font(DEFAULT_FONT_SIZES[name], type)
+  end  
+
+  def color(red, green = nil, blue = nil, alpha = 255)
+    ALL[:colors][hex_for_rgb(red, green, blue)] ||= load_color(red, green, blue, alpha)
   end
 
   # Convenience methods
   def background(filename)
     image("backgrounds/#{filename}", true)
   end
-  
   
   # These methods should not be used directly (they will reload the image, instead of getting them out of the cache ALL)
   def load_image(filename, option_flag = false)
@@ -79,15 +94,20 @@ class Artventure::Resources
     Gosu::Sample.new(@window, "#{DATA_PATH}/sfx/#{filename}")  
   end
   
-  def load_color(red, green, blue)
+  def load_color(red, green, blue, alpha)
+    alpha = alpha.is_a?(Numeric) ? alpha.to_s(16) : alpha.to_s
     if green.nil? && blue.nil?
+      alpha = (red.size == 6) ? "ff" : ""
       # either red contains the whole rgb value as a string in hex format OR the color as a symbol (e.g. :red)
-      red.is_a?(Symbol) ? DEFAULT_COLORS[red] : Gosu::Color.new("ff#{red}".hex)
+      red.is_a?(Symbol) ? DEFAULT_COLORS[red] : Gosu::Color.new("#{alpha}#{red}".hex)
     else
-      Gosu::Color.new(255, red, green, blue)
+      Gosu::Color.new(alpha, red, green, blue)
     end
   end
   
+  def load_font(size, name = Gosu::default_font_name)
+    Gosu::Font.new(@window, name, size)
+  end
   
   private
   

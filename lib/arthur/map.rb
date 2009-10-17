@@ -3,82 +3,14 @@ class Artventure::Map
   SQUARE_SIZE = 50
   attr_reader :width,
               :height,
-              :golds,
-              :greyshields,
-              :powerupswords,
-              :fires,
-              :snakes,
-              :bluepotions,
-              :redpotions,
-              :goldpotions,
-              :greenpotions,
-              :checkpoints,
-              :helmets,
-              :firecrystals,
-              :icecrystals,
-              :lightningcrystals,
-              :earthcrystals,
-              :signs,
-              :tree1s,
-              :tree2s,
-              :tree3s,
-              :tree4s,
-              :groundareagates,
-              :house1s,
-              :firebooks,
-              :icebooks,
-              :lightningbooks,
-              :earthbooks,
-              :evilbooks,
-              :swordsandgreyshields,
-              :shops
  
-  def initialize(window, filename)
-    @window = window
+  def initialize(game, filename)
+    @game, @filename = game, filename
+    # Load 60x60 tiles, 5px overlap in all four directions.    
 
-    # Load 60x60 tiles, 5px overlap in all four directions.
-    
+    # TODO: create Resources#font(name) method with defaults
     @font2 = Gosu::Font.new(window, Gosu::default_font_name, 20)
-  
-    Sprites = Hash.new([])
-    # @golds = []
-    # @shops = []
-    # @helmets = []
-    # @firecrystals = []
-    # @firebooks = []
-    # @icecrystals = []
-    # @icebooks = []
-    # @lightningcrystals = []
-    # @lightningbooks = []
-    # @earthcrystals = []
-    # @earthbooks = []
-    # @signs = []
-    # @evilbooks = []
-    # @swordsandgreyshields = []
-    # @tree1s = []
-    # @tree2s = []
-    # @tree3s = []
-    # @tree4s = []
-    # @groundareagates = []
-    # @house1s = []
-    # @greenpotions = []
-    # @bluepotions = []
-    # @redpotions = []
-    # @goldpotions = []
-    # @fires = []
-    # @snakes = []
-    # @checkpoints = []
-    # @greyshields = []
-    # @powerupswords = []
-
-    #@sprselecteditembox = Image.new(window, "data/selecteditembox.png", true)
-
-
-    @spritembox = Resource["items/statsbox.png", true]
-    @sprstatsbanner = Resource["data/backgrounds/statsbanner.png", true]
-
-    # Read map and convert to objects
-    load_map!(filename)
+    @map = nil
   end
  
   #Draw map content: (tiles, items)
@@ -126,34 +58,24 @@ class Artventure::Map
         end
       end
     end
-
+    
     # DRAW all sprites
-    Sprites.each do |category, members|
+    @sprites.each do |category, members|
       members.each do |sprite|
         sprite.draw(screen_x, screen_y)
       end
-    end
-    
-
-    @spritembox.draw(0, 0, 0,1,1,0x80ffffff)
-    #@sprstatsbanner.draw(0,95, 0,1,1,0x80ffffff)
+    end    
   end
  
-  # Solid at a given pixel position?
-  def solid?(x, y)
-    y < 0 || @tiles[x / SQUARE_SIZE][y / SQUARE_SIZE]
-  end
   
-  
-  private
-    
   # returns map as an 2d array
-  def load_map(filename)
+  def load
     lines = File.readlines(filename).map { |line| line.chop }
-    
-    @height = lines.size
+
     @width = lines[0].size
-          
+    @height = lines.size
+    
+    # TODO: check if x, y are absolute or relative values (probably relative, so maybe e.g. Fire.new(x,y) needs to use relative values while drawing)      
     @map = Array.new(@width) do |x|
       Array.new(@height) do |y|
         case lines[y][x, 1]
@@ -206,9 +128,9 @@ class Artventure::Map
         when 'Q'
           Tiles::Istonew1
         when 'f'
-          Sprites[:fires] << HitableFire.new(@window, x, y)
+          Sprites[:fires] << Fire.new(@window, x, y)
         when 'J'
-          Sprites[:snakes] << HitableSnake.new(@window, x, y)
+          Sprites[:snakes] << Snake.new(@window, x, y)
         when 'c'
           Sprites[:checkpoints] << CheckpointSkull.new(@windows, x, y)
         when 'S'
@@ -268,6 +190,18 @@ class Artventure::Map
         end
       end
     end
+  end
+  
+  def loaded?
+    not map.nil?
+  end
+  
+  
+  private
+    
+  # Solid at a given pixel position?
+  def solid?(x, y)
+    y < 0 || @tiles[x / SQUARE_SIZE][y / SQUARE_SIZE]
   end
   
 end

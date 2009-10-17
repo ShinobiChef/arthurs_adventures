@@ -16,15 +16,12 @@ module Artventure::Sprite
     width  = self.class.class_attributes[:width]
     height = self.class.class_attributes[:height]
     
+    @game = game
+    @x, @y = x, y
     @frames = game.resources.frames(image, width, height)
-    @x, @y = to_absolute(x), to_absolute(y)
+    
     # add a delay to the time so they move differently
     @delay = rand(100) + 1
-  end
-
-  # TODO: find out what screen_x and screen_y is for and try to remove it from the method params and make it e.g. a constant
-  def draw(screen_x, screen_y)
-    animate(:nothing, screen_x, screen_y)
   end
 
   def image
@@ -33,8 +30,27 @@ module Artventure::Sprite
   end
 
 
+  # draw(x, y, z, factor_x=1, factor_y=1, color=0xffffffff)
+  # 
+  # TODO: find out what screen_x and screen_y is for and try to remove it from the method params and make it e.g. a constant
+  def draw(screen_x, screen_y)
+    animate(:nothing, screen_x, screen_y)
+  end
+  
+  def x_a
+
   protected
 
+  def game
+    @game
+  end
+  
+  # About draw_rot(x, y, z, angle, center_x=0.5, center_y=0.5, factor_x=1, factor_y=1, color=0xffffffff, mode=:default)
+  # ----------------------------------------------------------------------
+  # center_x: Relative horizontal position of the rotation center on the image.
+  # 0 is the left border, 1 is the right border, 0.5 is the center (and default)
+  # the same applies to center_y, respectively.
+  # 
   def animate(animation, screen_x, screen_y)
     case animation
     when :rotate_slowly
@@ -50,7 +66,7 @@ module Artventure::Sprite
     Gosu::milliseconds - INIT_TIME / @delay
   end
 
-  def to_absolute(x)
+  def relative_to_absolute(x)
     x * Map::SQUARE_SIZE + (Map::SQUARE_SIZE / 2)
   end
       

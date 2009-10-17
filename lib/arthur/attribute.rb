@@ -77,4 +77,3 @@ class Artventure::Creature
   end
     
 end
-

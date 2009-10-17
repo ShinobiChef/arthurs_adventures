@@ -1,7 +1,4 @@
 # A player controlled or cpu-controlled creature on the screen
-# TODO: health will be of class Attribute, and rename to health and mana
-module Artventure
-end
 class Artventure::Creature
   include Sprite
   include Attribute::Accessors
@@ -29,19 +26,24 @@ class Artventure::Creature
 end
 
 
-# TODO: define all creatures here, but probably move into it's own (or even more than one) file
+# All creatures in the game
 module Artventure::Creatures
   
+  class Fire < Creature
+    image "enemys/fire.png"
+    health 100
+  end
+
   class Snake < Creature
-    image  "image_tile_set_location"
-    width  50
-    height 20
-    
+    image "enemys/snake.png"
     health 10
     
-    def initialize(game)
-      super(game)
+    def draw(screen_x, screen_y)
+      # TODO: is this what the method does: Draw, slowly rotating?
+      # TODO: maybe add this to the animation method of Sprite
+      image.draw_rot(@x - screen_x + (1 * Math.sin(thisTime / 100.7)), @y - screen_y, 0, 0)
     end
   end
-  
+
+
 end
