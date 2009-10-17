@@ -432,37 +432,7 @@ class Artventure::Game < Window
   private
   
   def load_sprites
-    @sprites = Hash.new([])
-    # @golds = []
-    # @shops = []
-    # @helmets = []
-    # @firecrystals = []
-    # @firebooks = []
-    # @icecrystals = []
-    # @icebooks = []
-    # @lightningcrystals = []
-    # @lightningbooks = []
-    # @earthcrystals = []
-    # @earthbooks = []
-    # @signs = []
-    # @evilbooks = []
-    # @swordsandgreyshields = []
-    # @tree1s = []
-    # @tree2s = []
-    # @tree3s = []
-    # @tree4s = []
-    # @groundareagates = []
-    # @house1s = []
-    # @greenpotions = []
-    # @bluepotions = []
-    # @redpotions = []
-    # @goldpotions = []
-    # @fires = []
-    # @snakes = []
-    # @checkpoints = []
-    # @greyshields = []
-    # @powerupswords = []
-  
+    @sprites = Map::Sprites.new(self)
   end
   
   def load_backgrounds
@@ -534,7 +504,7 @@ class Artventure::Game < Window
     # @current_areabkimage = Image.new(self, "data/backgrounds/blank.png", true)
     
     @maps = {}
-    @maps[:template]       = Map.new(self, "data/maps/template.map", "blank.png")
+    @maps[:template]       = Map.new(self, "template", "blank.png")
     @maps[:area1]          = Map.new(self, "area1", "area1bk.png")
     @maps[:area2]          = Map.new(self, "area2", "area2bk.png")
     @maps[:area3]          = Map.new(self, "area3", "area3bk.png")
@@ -559,7 +529,7 @@ class Artventure::Game < Window
     if @x > 12470 and [1,2,4,5,7,8].include?(@current_area)
         #$teleportgatesound.play 
       @x = 25 
-      $dir = :right
+      @dir = :right
       @current_area += 1 
       changemusic
     end
@@ -567,7 +537,7 @@ class Artventure::Game < Window
     if @x > 10 and @x < 25 and [2,3,5,6,8,9].include?(@current_area)
       #$teleportgatesound.play 
       @x = 12450 
-      $dir = :left
+      @dir = :left
       @current_area -= 1 
       changemusic
     end
@@ -592,7 +562,7 @@ class Artventure::Game < Window
       #$teleportgatesound.play 
       @x = 18760 
       @y = 18699 
-      $dir = :right
+      @dir = :right
       @current_area = 1 
       $normalareamusicogg.play(looping = true)       
     end
