@@ -1,2 +1,3 @@
 * First off: There are tons of TODO items scattered all over the source code, use rake todo to list them
 * extract huge background images into separate extension pack (one zip file) and focus on basic gameplay first with one or two areas
+* a basic Level editor with try-on-the-fly feature. this would boost creating new (and quality) content so much (inspiration: N+ for Nintendo DS)
