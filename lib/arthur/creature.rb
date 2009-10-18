@@ -5,29 +5,47 @@ class Artventure::Creature
   
   class_attribute :health, :mana
 
-  attr_reader :attributes
+  attr_reader :attributes, :inventory, :effects
 
   def initialize(game, x = nil, y = nil)
-    @attributes = {
-      :health => Attribute.new("Health", self.class.class_attributes[:health] || 1),
-      :mana   => Attribute.new("Mana", self.class.class_attributes[:mana] || 0)
-    }
     super
+    max_health = self.class.class_attributes[:health] || 1
+    max_mana   = self.class.class_attributes[:mana] || 0
+
+    @attributes = { :health => Attribute.new("Health", max_health), :mana => Attribute.new("Mana", max_mana) }
+    @inventory = Inventory.new(game, self)
+    @effects = []
   end
   
-  # TODO: maybe let Inventory class handle the destroying
-  def destroy_used_up_items!
-    #@items.reject{|name, item|, }
+  def lifecycle!
+    apply_timed_effects!
+    # TODO: check collisions for each creature?
   end
-
+  
   def apply_effect(name)
     Effect.new(creature, name).apply!
+  end
+  
+  def apply_timed_effects!
+    @effects.each do |effect|
+      effect.apply! if effect.ready?
+    end
   end
 end
 
 
 # All creatures in the game
 module Artventure::Creatures
+
+  class Arthur
+    attr_reader :level
+    
+    def initialize(game, x, y)
+      super
+      @attributes = {}
+    end
+  end
+  
   
   class Fire < Creature
     image "enemys/fire.png"

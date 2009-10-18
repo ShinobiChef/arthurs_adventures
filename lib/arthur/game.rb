@@ -75,29 +75,45 @@ class Artventure::Game < Window
     #if @rannum == 100 then @menumovesound.play end
 
     @arthur.update(move_x)
-    @arthur.collect_golds(@map.golds)
-    @arthur.collect_shops(@map.shops)
-    @arthur.collect_helmets(@map.helmets)
-    @arthur.collect_firecrystals(@map.firecrystals)
-    @arthur.collect_firebooks(@map.firebooks)
-    @arthur.collect_icecrystals(@map.icecrystals)
-    @arthur.collect_icebooks(@map.icebooks)
-    @arthur.collect_lightningcrystals(@map.lightningcrystals)
-    @arthur.collect_lightningbooks(@map.lightningbooks)
-    @arthur.collect_earthcrystals(@map.earthcrystals)
-    @arthur.collect_earthbooks(@map.earthbooks)
-    @arthur.collect_evilbooks(@map.evilbooks)
-    @arthur.collect_swordsandgreyshields(@map.swordsandgreyshields)
-    @arthur.collect_groundareagates(@map.groundareagates)
-    @arthur.collect_bluepotions(@map.bluepotions)
-    @arthur.collect_redpotions(@map.redpotions)
-    @arthur.collect_goldpotions(@map.goldpotions)    
-    @arthur.collect_greenpotions(@map.greenpotions)    
-    @arthur.hit_checkpoint(@map.checkpoints)
-    @arthur.hit_fires(@map.fires)
-    @arthur.hit_snakes(@map.snakes)
-    @arthur.collect_greyshields(@map.greyshields)
-    @arthur.collect_powerupswords(@map.powerupswords)
+    
+    # and @pickupgold.play and $gold += 100
+
+    @sprites.each do |category, array|
+      # each creature has something to do each second, maybe wandering around
+      array.each{|creature| creature.lifecycle! } if category == :creatures
+      # check for collisions (currently only with main character)
+      arthur = @players.first.character
+      array.each do |sprite|
+        if arthur.colliding_with?(sprite)
+          arthur.handle_collision!(sprite)
+        end
+      end
+    end
+    
+    # TODO: refactor collect_methods properly like above
+    # @arthur.collect_golds(@map.golds)
+    # @arthur.collect_shops(@map.shops)
+    # @arthur.collect_helmets(@map.helmets)
+    # @arthur.collect_firecrystals(@map.firecrystals)
+    # @arthur.collect_firebooks(@map.firebooks)
+    # @arthur.collect_icecrystals(@map.icecrystals)
+    # @arthur.collect_icebooks(@map.icebooks)
+    # @arthur.collect_lightningcrystals(@map.lightningcrystals)
+    # @arthur.collect_lightningbooks(@map.lightningbooks)
+    # @arthur.collect_earthcrystals(@map.earthcrystals)
+    # @arthur.collect_earthbooks(@map.earthbooks)
+    # @arthur.collect_evilbooks(@map.evilbooks)
+    # @arthur.collect_swordsandgreyshields(@map.swordsandgreyshields)
+    # @arthur.collect_groundareagates(@map.groundareagates)
+    # @arthur.collect_bluepotions(@map.bluepotions)
+    # @arthur.collect_redpotions(@map.redpotions)
+    # @arthur.collect_goldpotions(@map.goldpotions)    
+    # @arthur.collect_greenpotions(@map.greenpotions)    
+    # @arthur.hit_checkpoint(@map.checkpoints)
+    # @arthur.hit_fires(@map.fires)
+    # @arthur.hit_snakes(@map.snakes)
+    # @arthur.collect_greyshields(@map.greyshields)
+    # @arthur.collect_powerupswords(@map.powerupswords)
 
 
     # Scrolling follows player
@@ -433,6 +449,7 @@ class Artventure::Game < Window
   
   def load_sprites
     @sprites = Map::Sprites.new(self)
+    # TODO: load all sprites here ?
   end
   
   def load_backgrounds

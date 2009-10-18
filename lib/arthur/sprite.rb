@@ -37,8 +37,16 @@ module Artventure::Sprite
     animate(:nothing, screen_x, screen_y)
   end
   
-  def x_a
+  # give either a single sprite or an array
+  def colliding_with?(sprite)
+    (sprite.x - x).abs < Map::SQUARE_SIZE / 2 and (sprite.y - y).abs < Map::SQUARE_SIZE
+  end
 
+  # TODO: maybe renamed other similar methods to handle_ for consistency
+  def handle_collision!(sprite)
+    # Default: do nothing
+  end
+  
   protected
 
   def game
